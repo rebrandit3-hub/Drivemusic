@@ -5,6 +5,7 @@ import HomePageSkeleton, { MixesSectionSkeleton } from "./HomePageSkeleton";
 import { usePopularTracksAllTime } from "../hooks/usePopularTracks";
 import { useListeningNow } from "../hooks/useListeningNow";
 import ListeningNowSection from "./ListeningNowSection";
+import { MobileHomeHeader } from "./MobileHomeHeader";
 import { useRecentlyPlayed } from "../hooks/useRecentlyPlayed";
 import { useDailyMixes } from "../hooks/useDailyMixes";
 import { useMostSaved, usePopularAlbums } from "../hooks/useExploreCollections";
@@ -102,6 +103,7 @@ function HomeFeed({ onRetry }: { onRetry: () => void }) {
 
         {isReady && !nothingLoaded && (
           <div className="col-start-1 row-start-1 w-full pb-[16px]">
+            <MobileHomeHeader />
             {mixesLoading ? (
               <MixesSectionSkeleton />
             ) : (

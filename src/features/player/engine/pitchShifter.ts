@@ -583,6 +583,7 @@ export class PitchShifterController {
       this.audio = audio;
       this.isConnected = true;
       this.bindPlaybackState(audio);
+      this.bindContextRecovery(graph.ctx);
       this.resumeContext();
     } catch (err) {
       console.error("[AudioEffects] Failed to attach to audio element:", err);
@@ -629,8 +630,38 @@ export class PitchShifterController {
 
   private wakeContext(): void {
     this.clearSuspendTimer();
-    if (this.context && this.context.state === "suspended") {
+    // "interrupted" is what Safari / iOS report after a call, Siri or
+    // another app taking the audio session
+    const state = this.context?.state as string | undefined;
+    if (this.context && (state === "suspended" || state === "interrupted")) {
       void this.context.resume().catch(() => {});
+    }
+  }
+
+  /**
+   * The OS can suspend or interrupt the AudioContext while the <audio>
+   * element keeps "playing" (device switch, phone call, app backgrounded).
+   * Every sample goes through this graph, so that would be silent playback
+   * with a moving progress bar. Bring the context back whenever that happens
+   * and the element is still meant to be playing.
+   */
+  private bindContextRecovery(ctx: AudioContext): void {
+    const ctxObj = ctx as AudioContext & { __liner_recovery_bound?: boolean };
+    if (ctxObj.__liner_recovery_bound) return;
+    if (typeof ctx.addEventListener !== "function") return;
+    ctxObj.__liner_recovery_bound = true;
+    const recover = () => {
+      if (this.context !== ctx || !this.audio || this.audio.paused) return;
+      if ((ctx.state as string) === "running" || ctx.state === "closed") {
+        return;
+      }
+      this.wakeContext();
+    };
+    ctx.addEventListener("statechange", recover);
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") recover();
+      });
     }
   }
 

@@ -36,7 +36,7 @@ function DailyMixesSection({
         <div className="group flex items-center gap-3">
           <MixFluidSquare coverUrl={firstCoverUrl} />
           <h2
-            className="font-roboto-flex-heading text-text-primary text-[36px] m-0 leading-none tracking-tight"
+            className="font-roboto-flex-heading text-text-primary text-[36px] max-md:text-[24px] m-0 leading-none tracking-tight"
             style={headingStyle}
           >
             {t("home.dailyMixes") || "Your Mixes"}
@@ -44,7 +44,7 @@ function DailyMixesSection({
         </div>
       </div>
 
-      <ScrollableRow className="flex gap-[28px] pl-3 pr-3 mt-[12px] overflow-x-auto pb-[2px]">
+      <ScrollableRow className="flex gap-[28px] max-md:gap-[14px] pl-3 pr-3 max-md:pl-2.5 mt-[12px] overflow-x-auto pb-[2px]">
         {mixes.map((mix, index) => (
           <DailyMixCard
             key={`daily-mix-${mix.id}-${index}`}

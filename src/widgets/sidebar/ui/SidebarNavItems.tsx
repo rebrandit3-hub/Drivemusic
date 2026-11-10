@@ -11,6 +11,26 @@ export interface SidebarNavItemsProps {
   onSearchToggle: () => void;
 }
 
+/** Spotify-style caption under each icon, only in the mobile bottom bar. */
+export function TabLabel({
+  active,
+  children,
+}: {
+  active: boolean;
+  children: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "hidden max-md:block text-[10.5px] font-[600] leading-none tracking-[0.01em]",
+        active ? "text-brand-ink" : "text-text-tertiary",
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
 export function SidebarNavItems({
   searchOpen,
   onSearchToggle,
@@ -61,17 +81,18 @@ export function SidebarNavItems({
                   type="button"
                   aria-pressed={searchOpen}
                   onClick={onSearchToggle}
-                  className="group relative inline-flex items-center justify-center max-md:min-w-[44px] max-md:min-h-[44px] touch-manipulation bg-transparent border-0 p-0 cursor-pointer active:scale-[0.96] transition-transform duration-100"
+                  className="group relative inline-flex items-center justify-center max-md:min-w-[56px] max-md:min-h-[48px] max-md:flex-col max-md:gap-[3px] touch-manipulation bg-transparent border-0 p-0 cursor-pointer active:scale-[0.96] transition-transform duration-100"
                 >
                   <Icon
                     size={26}
                     className={cn(
-                      "relative z-10 text-text-primary transition-opacity duration-150 ease-out",
+                      "relative z-10 text-text-primary transition-opacity duration-150 ease-out max-md:size-[24px]",
                       active
-                        ? "opacity-100"
+                        ? "opacity-100 max-md:text-brand-ink"
                         : "opacity-55 group-hover:opacity-90",
                     )}
                   />
+                  <TabLabel active={active}>{tooltipLabel}</TabLabel>
                 </button>
               </Tooltip>
             );
@@ -95,17 +116,18 @@ export function SidebarNavItems({
                   if (event.buttons & 1) setPendingHref(null);
                 }}
                 onPointerCancel={() => setPendingHref(null)}
-                className="group relative inline-flex items-center justify-center max-md:min-w-[44px] max-md:min-h-[44px] touch-manipulation cursor-pointer active:scale-[0.96] transition-transform duration-100"
+                className="group relative inline-flex items-center justify-center max-md:min-w-[56px] max-md:min-h-[48px] max-md:flex-col max-md:gap-[3px] touch-manipulation cursor-pointer active:scale-[0.96] transition-transform duration-100"
               >
                 <Icon
                   size={26}
                   className={cn(
-                    "relative z-10 text-text-primary",
+                    "relative z-10 text-text-primary max-md:size-[24px]",
                     active
-                      ? "opacity-100"
+                      ? "opacity-100 max-md:text-brand-ink"
                       : "opacity-55 transition-opacity duration-150 ease-out group-hover:opacity-90",
                   )}
                 />
+                <TabLabel active={active}>{tooltipLabel}</TabLabel>
               </Link>
             </Tooltip>
           );

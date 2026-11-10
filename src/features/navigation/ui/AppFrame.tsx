@@ -730,9 +730,10 @@ export default function AppFrame({ children }: AppFrameProps) {
   return (
     <div
       ref={appFrameRef}
-      className={`app-shell-enter relative flex flex-col h-full w-full overflow-hidden p-1.5 gap-1.5 ${
+      data-app-frame
+      className={`app-shell-enter relative flex flex-col h-full w-full overflow-hidden p-1.5 gap-1.5 max-md:p-0 max-md:gap-0 max-md:!rounded-none ${
         isFullscreenPlayer ? "bg-black" : "bg-bg-canvas"
-      } ${isEdgeToEdge ? "rounded-none" : "rounded-item"}`}
+      } ${isEdgeToEdge ? "rounded-none" : "rounded-item max-md:rounded-none"}`}
       style={isEdgeToEdge ? undefined : { clipPath: "inset(0 round 12px)" }}
       onScroll={(e) => {
         if (e.currentTarget.scrollLeft !== 0) e.currentTarget.scrollLeft = 0;
@@ -749,7 +750,7 @@ export default function AppFrame({ children }: AppFrameProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.22, ease: "easeOut" }}
-            className="absolute left-[64px] right-1.5 top-1.5 z-[45] max-md:left-1.5"
+            className="absolute left-[64px] right-1.5 top-1.5 z-[45] max-md:left-0 max-md:right-0"
           >
             <Header
               searchOpen={searchOpen}
@@ -767,7 +768,7 @@ export default function AppFrame({ children }: AppFrameProps) {
       >
         <aside
           ref={sidebarRef}
-          className="w-[52px] shrink-0 z-[45] relative flex flex-col max-md:w-full max-md:h-[56px] max-md:pb-[env(safe-area-inset-bottom)] max-md:box-content"
+          className="w-[52px] shrink-0 z-[45] relative flex flex-col max-md:w-full max-md:h-[62px] max-md:pb-[env(safe-area-inset-bottom)] max-md:box-content"
         >
           <Sidebar
             searchOpen={searchOpen}
@@ -781,7 +782,7 @@ export default function AppFrame({ children }: AppFrameProps) {
               // the header only sits on the right now, so pages start at the top:
               // with their own 8px the hero lines up with the sidebar logo (16px)
               "flex-1 min-w-0 flex flex-col relative h-full overflow-hidden [--page-inset-top:8px]",
-              "rounded-item",
+              "rounded-item max-md:rounded-none",
               shouldShowMiniPlayer && hasPageBackdrop
                 ? "[--page-inset-bottom:64px] [--floating-inset-bottom:70px]"
                 : "[--page-inset-bottom:0px] [--floating-inset-bottom:0px]",

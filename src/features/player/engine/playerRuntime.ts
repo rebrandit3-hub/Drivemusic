@@ -119,25 +119,49 @@ export class PlayerRuntime {
   private setupDeviceChangeListener() {
     if (typeof navigator === "undefined" || !navigator.mediaDevices) return;
 
-    let initial = true;
-    const onDeviceChange = () => {
-      if (initial) {
-        initial = false;
-        return;
+    const mediaDevices = navigator.mediaDevices;
+    // ids of the audio outputs we last saw; null until the first listing
+    let knownOutputs: Set<string> | null = null;
+    const listOutputs = async (): Promise<Set<string> | null> => {
+      try {
+        const devices = await mediaDevices.enumerateDevices();
+        return new Set(
+          devices
+            .filter((device) => device.kind === "audiooutput")
+            .map((device) => device.deviceId || device.groupId || device.label),
+        );
+      } catch {
+        return null;
       }
+    };
+
+    // Only pause when an output went away (headphones unplugged, Bluetooth
+    // dropped). Plugging something in, a mic appearing or the OS re-listing
+    // the same devices used to pause playback for no reason.
+    const onDeviceChange = async () => {
+      const previous = knownOutputs;
+      const current = await listOutputs();
+      if (!current) return;
+      knownOutputs = current;
+      if (!previous) return;
+      const lostOutput = [...previous].some((id) => !current.has(id));
+      if (!lostOutput) return;
       if (!usePlayerStore.getState().pauseOnDeviceChange) return;
       if (
         !this.audio.paused &&
         usePlayerStore.getState().status === "playing"
       ) {
+        log("yellow", "audio", "audio output removed, pausing");
         this.pause();
       }
     };
 
     try {
-      navigator.mediaDevices.addEventListener("devicechange", onDeviceChange);
-      void navigator.mediaDevices.enumerateDevices().then(() => {
-        initial = false;
+      mediaDevices.addEventListener("devicechange", () => {
+        void onDeviceChange();
+      });
+      void listOutputs().then((outputs) => {
+        if (outputs && !knownOutputs) knownOutputs = outputs;
       });
     } catch {
       // ignore unsupported environments

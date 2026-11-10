@@ -80,14 +80,14 @@ export function EntityHero({
 }: EntityHeroProps) {
   return (
     <section
-      className="flex w-full min-w-0 items-stretch gap-[22px]"
+      className="flex w-full min-w-0 items-stretch gap-[22px] max-md:flex-col max-md:gap-[16px]"
       data-no-window-drag
     >
       {/* 140px is the text column's natural height (title, subtitle, meta,
           16px + buttons), so pinning the buttons to the bottom adds no gap */}
       <div
         className={cn(
-          "relative flex h-[140px] w-[140px] shrink-0 items-center justify-center overflow-hidden rounded-[10px]",
+          "relative flex h-[140px] w-[140px] shrink-0 items-center justify-center overflow-hidden rounded-[10px] max-md:h-[min(220px,58vw)] max-md:w-[min(220px,58vw)] max-md:self-center max-md:shadow-[0_12px_40px_rgba(0,0,0,0.35)]",
           coverClassName || "bg-border-alpha-14",
         )}
       >
@@ -97,7 +97,7 @@ export function EntityHero({
       <div className={cn("flex min-w-0 flex-1 flex-col", contentClassName)}>
         {/* the 30px title's line box starts 7px above its capitals in SF Pro,
             so this puts the cap top level with the cover's top edge */}
-        <div className="-mt-[7px] min-w-0">{title}</div>
+        <div className="-mt-[7px] min-w-0 max-md:mt-0">{title}</div>
         {subtitle && <div className="mt-[4px] min-w-0">{subtitle}</div>}
         {meta && <div className="mt-[10px]">{meta}</div>}
 
@@ -109,8 +109,10 @@ export function EntityHero({
               actionsClassName,
             )}
           >
-            <div className="flex items-center gap-[8px]">{actions}</div>
-            <div className="flex items-center gap-[12px]">
+            <div className="flex items-center gap-[8px] max-md:flex-wrap">
+              {actions}
+            </div>
+            <div className="flex items-center gap-[12px] max-md:w-full max-md:flex-wrap max-md:gap-[8px] max-md:[&>*:first-child]:w-full max-md:[&>*:first-child]:max-w-none">
               {trailingActions}
             </div>
           </div>
