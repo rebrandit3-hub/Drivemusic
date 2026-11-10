@@ -168,7 +168,7 @@ export const Slider = memo(function Slider({
           }`}
         >
           <div
-            className={`absolute inset-y-0 left-0 rounded-full bg-text-primary transition-[width] ease-out ${
+            className={`absolute inset-y-0 left-0 rounded-full bg-brand transition-[width] ease-out ${
               isDragging ? "duration-0" : "duration-100"
             }`}
             style={{ width: `${percentage}%` }}

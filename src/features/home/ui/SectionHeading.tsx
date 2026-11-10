@@ -23,7 +23,9 @@ export function SectionHeading({
   marginTop = "mt-[22px]",
 }: SectionHeadingProps) {
   return (
-    <div className={`${marginTop} px-3 flex items-center justify-between`}>
+    <div
+      className={`${marginTop} px-3 max-md:px-2.5 flex items-center justify-between`}
+    >
       <div className="flex flex-col gap-0.5">
         <div className="flex items-center gap-2.5">
           {icon && (
@@ -32,7 +34,7 @@ export function SectionHeading({
             </div>
           )}
           <h2
-            className="font-roboto-flex-heading text-text-primary text-[24px] m-0 leading-none tracking-tight"
+            className="font-roboto-flex-heading text-text-primary text-[24px] max-md:text-[20px] m-0 leading-none tracking-tight"
             style={headingStyle}
           >
             {title}

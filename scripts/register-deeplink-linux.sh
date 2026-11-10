@@ -13,7 +13,7 @@ if [ "${1:-}" = "--binary" ]; then
   [ -x "$BIN" ] || { echo "not executable: $BIN" >&2; exit 1; }
   EXEC="$BIN %u"
   ENTRY="liner-handler.desktop"
-  LABEL="Liner"
+  LABEL="DriveMusic"
 else
   ELECTRON="$DESKTOP_DIR/node_modules/.bin/electron"
   [ -x "$ELECTRON" ] || { echo "electron not found, run pnpm install first" >&2; exit 1; }
@@ -21,7 +21,7 @@ else
   # so keep the vite dev server running for this to open anything
   EXEC="$ELECTRON $DESKTOP_DIR %u"
   ENTRY="liner-dev.desktop"
-  LABEL="Liner (dev)"
+  LABEL="DriveMusic (dev)"
 fi
 
 mkdir -p "$APP_DIR"

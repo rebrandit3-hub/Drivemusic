@@ -16,21 +16,21 @@
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *, .dark, .dark *));
 
 :root {
-  --login-backdrop: #141417;
-  --login-glow: #4b5272;
-  --login-glow-secondary: #3f4560;
-  --bg-canvas: #e4e4e7;
+  --login-backdrop: #0a1210;
+  --login-glow: #1f7a63;
+  --login-glow-secondary: #17594a;
+  --bg-canvas: #e2ebe7;
   --bg-surface: #ffffff;
-  --bg-primary: #f5f5f7;
-  --bg-elevated: #e6e6eb;
-  --bg-panel: #dedee3;
-  --bg-overlay: rgba(245, 245, 247, 0.96);
+  --bg-primary: #f3f8f6;
+  --bg-elevated: #e3ece8;
+  --bg-panel: #d9e5e0;
+  --bg-overlay: rgba(243, 248, 246, 0.96);
   --bg-toolbox: rgba(0, 0, 0, 0.04);
   --bg-toolbox-active: rgba(0, 0, 0, 0.08);
   --bg-glass: rgba(255, 255, 255, 0.55);
   --border-toolbox-divider: rgba(0, 0, 0, 0.1);
 
-  --border-primary: #e4e4e7;
+  --border-primary: #dbe6e1;
   --border-secondary: #d4d4d8;
   --border-tertiary: #a1a1aa;
   --border-white-alpha-14: rgba(0, 0, 0, 0.06);
@@ -45,15 +45,22 @@
   --accent-tertiary: #ff7d7d;
   --accent-warning: #d97706;
 
-  --btn-primary-bg: #18181b;
-  --btn-primary-text: #ffffff;
+  /* DriveMusic mint brand */
+  --brand: #3ddbb0;
+  --brand-strong: #26c79b;
+  --brand-soft: rgba(38, 199, 155, 0.14);
+  --brand-contrast: #03150f;
+  --brand-ink: #0e8f6b;
+
+  --btn-primary-bg: var(--brand);
+  --btn-primary-text: var(--brand-contrast);
 
   /* design tokens, see docs/DESIGN.md */
   --fill-subtle: rgba(0, 0, 0, 0.03);
   --fill: rgba(0, 0, 0, 0.05);
   --fill-hover: rgba(0, 0, 0, 0.08);
   --fill-strong: rgba(0, 0, 0, 0.1);
-  --surface-glass: rgba(245, 245, 247, 0.92);
+  --surface-glass: rgba(243, 248, 246, 0.92);
 
   --radius-xs: 4px;
   --radius-lg: 10px;
@@ -63,18 +70,18 @@
 
 :root[data-theme="light"],
 :root.light {
-  --bg-canvas: #e4e4e7;
+  --bg-canvas: #e2ebe7;
   --bg-surface: #ffffff;
-  --bg-primary: #f5f5f7;
-  --bg-elevated: #e6e6eb;
-  --bg-panel: #dedee3;
-  --bg-overlay: rgba(245, 245, 247, 0.96);
+  --bg-primary: #f3f8f6;
+  --bg-elevated: #e3ece8;
+  --bg-panel: #d9e5e0;
+  --bg-overlay: rgba(243, 248, 246, 0.96);
   --bg-toolbox: rgba(0, 0, 0, 0.04);
   --bg-toolbox-active: rgba(0, 0, 0, 0.08);
   --bg-glass: rgba(255, 255, 255, 0.55);
   --border-toolbox-divider: rgba(0, 0, 0, 0.1);
 
-  --border-primary: #e4e4e7;
+  --border-primary: #dbe6e1;
   --border-secondary: #d4d4d8;
   --border-tertiary: #a1a1aa;
   --border-white-alpha-14: rgba(0, 0, 0, 0.06);
@@ -89,31 +96,38 @@
   --accent-tertiary: #ff7d7d;
   --accent-warning: #d97706;
 
-  --btn-primary-bg: #18181b;
-  --btn-primary-text: #ffffff;
+  /* DriveMusic mint brand */
+  --brand: #3ddbb0;
+  --brand-strong: #26c79b;
+  --brand-soft: rgba(38, 199, 155, 0.14);
+  --brand-contrast: #03150f;
+  --brand-ink: #0e8f6b;
+
+  --btn-primary-bg: var(--brand);
+  --btn-primary-text: var(--brand-contrast);
 
   /* design tokens, see docs/DESIGN.md */
   --fill-subtle: rgba(0, 0, 0, 0.03);
   --fill: rgba(0, 0, 0, 0.05);
   --fill-hover: rgba(0, 0, 0, 0.08);
   --fill-strong: rgba(0, 0, 0, 0.1);
-  --surface-glass: rgba(245, 245, 247, 0.92);
+  --surface-glass: rgba(243, 248, 246, 0.92);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not(.light) {
-    --bg-canvas: #000000;
-    --bg-surface: #0a0a0a;
-    --bg-primary: #0a0a0a;
-    --bg-elevated: #141414;
-    --bg-panel: #1a1a1a;
-    --bg-overlay: rgba(10, 10, 10, 0.96);
+    --bg-canvas: #050807;
+    --bg-surface: #0c100f;
+    --bg-primary: #0c100f;
+    --bg-elevated: #131917;
+    --bg-panel: #18201d;
+    --bg-overlay: rgba(12, 16, 15, 0.96);
     --bg-toolbox: rgba(255, 255, 255, 0.04);
     --bg-toolbox-active: rgba(255, 255, 255, 0.09);
     --bg-glass: rgba(70, 70, 70, 0.2);
     --border-toolbox-divider: rgba(255, 255, 255, 0.1);
 
-    --border-primary: #1a1a1a;
+    --border-primary: #1a2320;
     --border-secondary: #1d1f23;
     --border-tertiary: #1e2024;
     --border-white-alpha-14: rgba(
@@ -133,14 +147,21 @@
     --accent-tertiary: #ff9b9b;
     --accent-warning: #ffde9e;
 
-    --btn-primary-bg: #d9d9dd;
-    --btn-primary-text: #000000;
+    /* DriveMusic mint brand */
+    --brand: #4be3b8;
+    --brand-strong: #6cf0cb;
+    --brand-soft: rgba(75, 227, 184, 0.14);
+    --brand-contrast: #03150f;
+    --brand-ink: #5ee8c1;
+
+    --btn-primary-bg: var(--brand);
+    --btn-primary-text: var(--brand-contrast);
 
     --fill-subtle: rgba(255, 255, 255, 0.04);
     --fill: rgba(255, 255, 255, 0.07);
     --fill-hover: rgba(255, 255, 255, 0.1);
     --fill-strong: rgba(255, 255, 255, 0.14);
-    --surface-glass: rgba(22, 22, 24, 0.9);
+    --surface-glass: rgba(20, 27, 25, 0.9);
   }
 }
 
@@ -148,18 +169,18 @@
 :root.dark,
 [data-theme="dark"],
 .dark {
-  --bg-canvas: #000000;
-  --bg-surface: #0a0a0a;
-  --bg-primary: #0a0a0a;
-  --bg-elevated: #141414;
-  --bg-panel: #1a1a1a;
-  --bg-overlay: rgba(10, 10, 10, 0.96);
+  --bg-canvas: #050807;
+  --bg-surface: #0c100f;
+  --bg-primary: #0c100f;
+  --bg-elevated: #131917;
+  --bg-panel: #18201d;
+  --bg-overlay: rgba(12, 16, 15, 0.96);
   --bg-toolbox: rgba(255, 255, 255, 0.04);
   --bg-toolbox-active: rgba(255, 255, 255, 0.09);
   --bg-glass: rgba(70, 70, 70, 0.2);
   --border-toolbox-divider: rgba(255, 255, 255, 0.1);
 
-  --border-primary: #1a1a1a;
+  --border-primary: #1a2320;
   --border-secondary: #1d1f23;
   --border-tertiary: #1e2024;
   --border-white-alpha-14: rgba(255, 255, 255, 0.08);
@@ -174,14 +195,21 @@
   --accent-tertiary: #ff9b9b;
   --accent-warning: #ffde9e;
 
-  --btn-primary-bg: #d9d9dd;
-  --btn-primary-text: #000000;
+  /* DriveMusic mint brand */
+  --brand: #4be3b8;
+  --brand-strong: #6cf0cb;
+  --brand-soft: rgba(75, 227, 184, 0.14);
+  --brand-contrast: #03150f;
+  --brand-ink: #5ee8c1;
+
+  --btn-primary-bg: var(--brand);
+  --btn-primary-text: var(--brand-contrast);
 
   --fill-subtle: rgba(255, 255, 255, 0.04);
   --fill: rgba(255, 255, 255, 0.07);
   --fill-hover: rgba(255, 255, 255, 0.1);
   --fill-strong: rgba(255, 255, 255, 0.14);
-  --surface-glass: rgba(22, 22, 24, 0.9);
+  --surface-glass: rgba(20, 27, 25, 0.9);
 }
 
 @theme inline {
@@ -210,6 +238,11 @@
   --color-accent-secondary: var(--accent-secondary);
   --color-accent-tertiary: var(--accent-tertiary);
   --color-accent-warning: var(--accent-warning);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-contrast: var(--brand-contrast);
+  --color-brand-ink: var(--brand-ink);
 
   --color-btn-primary-bg: var(--btn-primary-bg);
   --color-btn-primary-text: var(--btn-primary-text);
@@ -602,4 +635,39 @@ html[data-hover-reset] [data-window-controls] button:hover {
 
 .lyrics-edge-fog[data-at-bottom] {
   --lyrics-fog-bottom: 0%;
+}
+
+/* Mobile / narrow windows: edge-to-edge shell, no tap flash, no font
+   inflation, and dynamic viewport height so mobile browser chrome doesn't
+   cut off the player. */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 767.98px) {
+  html,
+  body,
+  #root {
+    height: 100dvh;
+  }
+  body {
+    padding: 0 !important;
+    padding-top: env(safe-area-inset-top) !important;
+  }
+  input,
+  textarea,
+  select {
+    font-size: max(16px, 1em);
+  }
+  /* phones get an edge-to-edge shell, no floating window card */
+  [data-app-frame] {
+    clip-path: none !important;
+    border-radius: 0 !important;
+  }
+}
+
+::selection {
+  background: var(--brand-soft);
 }

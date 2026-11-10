@@ -1,14 +1,14 @@
 {
-  "name": "@liner/client",
+  "name": "drivemusic",
   "version": "0.2.12",
   "type": "module",
   "private": true,
-  "description": "Liner Music Player",
+  "description": "DriveMusic Player",
   "author": {
     "name": "hkamori",
     "email": "dev@tryliner.fun"
   },
-  "desktopName": "liner",
+  "desktopName": "drivemusic",
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
@@ -30,15 +30,15 @@
     "native:build": "node scripts/build-native-addon.cjs"
   },
   "build": {
-    "appId": "com.hkamori.liner",
-    "productName": "Liner",
-    "executableName": "liner",
+    "appId": "com.rebrandit.drivemusic",
+    "productName": "DriveMusic",
+    "executableName": "drivemusic",
     "artifactName": "${productName}-${version}-${arch}.${ext}",
     "publish": [
       {
         "provider": "github",
-        "owner": "tryliner",
-        "repo": "desktop"
+        "owner": "rebrandit3-hub",
+        "repo": "Drivemusic"
       }
     ],
     "directories": {
@@ -46,7 +46,7 @@
     },
     "protocols": [
       {
-        "name": "Liner",
+        "name": "DriveMusic",
         "schemes": [
           "liner"
         ]
@@ -58,7 +58,7 @@
       "native/snap-preview/build/Release/snap_preview.node"
     ],
     "linux": {
-      "executableName": "liner",
+      "executableName": "drivemusic",
       "syncDesktopName": true,
       "maintainer": "hkamori <dev@tryliner.fun>",
       "icon": "build/icons",
@@ -69,21 +69,21 @@
       "category": "Audio"
     },
     "deb": {
-      "packageName": "liner",
-      "artifactName": "liner_${version}_${arch}.${ext}"
+      "packageName": "drivemusic",
+      "artifactName": "drivemusic_${version}_${arch}.${ext}"
     },
     "appImage": {
-      "artifactName": "Liner-${version}.${ext}"
+      "artifactName": "DriveMusic-${version}.${ext}"
     },
     "win": {
-      "executableName": "liner",
+      "executableName": "drivemusic",
       "icon": "build/icon.ico",
       "target": [
         "nsis"
       ]
     },
     "nsis": {
-      "artifactName": "Liner-Setup-${version}.${ext}",
+      "artifactName": "DriveMusic-Setup-${version}.${ext}",
       "allowToChangeInstallationDirectory": true,
       "oneClick": false
     },

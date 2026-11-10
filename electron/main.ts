@@ -278,8 +278,8 @@ function flushPendingDeeplink() {
 
 const DEFAULT_WINDOW_WIDTH = 1200;
 const DEFAULT_WINDOW_HEIGHT = 780;
-const MIN_WINDOW_WIDTH = 1100;
-const MIN_WINDOW_HEIGHT = 705;
+const MIN_WINDOW_WIDTH = 380;
+const MIN_WINDOW_HEIGHT = 620;
 
 function createWindow() {
   const windowState = getWindowStateStore();
@@ -289,7 +289,7 @@ function createWindow() {
     { width: MIN_WINDOW_WIDTH, height: MIN_WINDOW_HEIGHT },
   );
   mainWindow = new BrowserWindow({
-    title: "Liner",
+    title: "DriveMusic",
     icon: path.join(process.env.VITE_PUBLIC!, "icon.png"),
     ...(restoredBounds ?? {
       width: DEFAULT_WINDOW_WIDTH,
@@ -542,7 +542,7 @@ useChannelData(app);
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   console.warn(
-    "\n\x1b[33m[Liner]\x1b[0m Another instance of Liner is already running in the background. Exiting development instance.\nTo run in development mode, please close the running Liner application first.\n",
+    "\n\x1b[33m[DriveMusic]\x1b[0m Another instance of DriveMusic is already running in the background. Exiting development instance.\nTo run in development mode, please close the running DriveMusic application first.\n",
   );
   app.quit();
 } else {

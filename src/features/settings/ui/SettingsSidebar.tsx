@@ -40,7 +40,7 @@ export function SettingsSidebar<T extends string>({
     window.open(url, "_blank", "noopener,noreferrer");
 
   return (
-    <aside className="flex min-h-0 w-[240px] shrink-0 flex-col font-sans">
+    <aside className="flex min-h-0 w-[240px] shrink-0 flex-col font-sans max-md:w-full max-md:max-h-[38%] max-md:border-b max-md:border-border-primary/50">
       <div className="px-[12px] pt-[12px] pb-[12px]">
         <TextInput
           size="sm"

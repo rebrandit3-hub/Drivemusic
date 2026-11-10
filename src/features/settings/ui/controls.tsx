@@ -31,7 +31,7 @@ function matchesSearch({
 
 function RowText({ title, description }: SearchableProps) {
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-[3px]">
+    <div className="flex min-w-0 flex-1 flex-col gap-[3px] max-sm:basis-[180px]">
       <span className="text-pretty text-text-primary text-label font-[500] leading-[18px] tracking-[-0.005em]">
         {title}
       </span>
@@ -68,7 +68,7 @@ export function SettingRow({ control, icon, ...text }: SettingRowProps) {
     <div
       className={cn(
         rowSurface,
-        "flex min-h-[52px] items-center justify-between gap-[14px] py-[10px]",
+        "flex min-h-[52px] items-center justify-between gap-[14px] py-[10px] max-sm:flex-wrap max-sm:gap-y-[10px]",
       )}
     >
       {icon ? (

@@ -332,7 +332,7 @@ export class DiscordRpcManager {
 
       const dur = Math.max(0, payload.durationMs || track.durationMs || 0);
 
-      let activityName = "Liner";
+      let activityName = "DriveMusic";
       let detailsText = title;
       let stateText = isPaused ? `${artist} (Paused)` : artist;
       let rpcStatusDisplayType = StatusDisplayType.STATE; // 1 -> "Listening to [Artist]"
@@ -345,8 +345,8 @@ export class DiscordRpcManager {
           stateText = artist;
           break;
         case "app":
-          activityName = "Liner";
-          rpcStatusDisplayType = StatusDisplayType.NAME; // 0 -> "Listening to Liner"
+          activityName = "DriveMusic";
+          rpcStatusDisplayType = StatusDisplayType.NAME; // 0 -> "Listening to DriveMusic"
           detailsText = title;
           stateText = isPaused ? `${artist} (Paused)` : artist;
           break;
@@ -376,7 +376,7 @@ export class DiscordRpcManager {
       }
 
       const activity: SetActivity & { status_display_type?: number } = {
-        name: sanitizeText(activityName) || "Liner",
+        name: sanitizeText(activityName) || "DriveMusic",
         type: 2, // 2 = ActivityType.Listening -> renders "Listening to" + live progress bar
         details: sanitizeText(detailsText),
         state: sanitizeText(stateText),
@@ -404,7 +404,7 @@ export class DiscordRpcManager {
       if (this.settings.showArtwork && coverImage) {
         activity.largeImageKey = coverImage;
         activity.largeImageText =
-          sanitizeText(track.album || track.title) || "Liner";
+          sanitizeText(track.album || track.title) || "DriveMusic";
       }
 
       // Small artwork (Artist photo badge)
@@ -419,14 +419,14 @@ export class DiscordRpcManager {
 
       if (this.settings.showButton && track.id) {
         buttons.push({
-          label: "Listen on Liner",
+          label: "Listen on DriveMusic",
           url: `https://link.tryliner.fun/track?id=${encodeURIComponent(track.id)}`,
         });
       }
 
       if (this.settings.showDownloadButton) {
         buttons.push({
-          label: "Download Liner",
+          label: "Download DriveMusic",
           url: "https://tryliner.fun",
         });
       }

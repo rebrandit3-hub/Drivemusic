@@ -13,6 +13,9 @@ export interface HeaderProps {
   className?: string;
 }
 
+const isDesktopApp =
+  typeof window !== "undefined" && Boolean(window.linerElectron);
+
 export const Header = forwardRef<HTMLElement, HeaderProps>(function Header(
   { className },
   ref,
@@ -23,6 +26,8 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(function Header(
       data-window-drag
       className={cn(
         "relative z-45 w-full shrink-0 select-none bg-transparent h-[50px] flex items-center justify-end",
+        // window chrome only makes sense inside the desktop app
+        !isDesktopApp && "max-md:hidden",
         className,
       )}
     >

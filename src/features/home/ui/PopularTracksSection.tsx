@@ -126,7 +126,7 @@ function TrackCard({
 
   return (
     <div
-      className="group flex-shrink-0 w-[175px] cursor-pointer select-none"
+      className="group flex-shrink-0 w-[175px] max-md:w-[146px] cursor-pointer select-none"
       onClick={handleClick}
       onContextMenu={handleContextMenu}
     >
@@ -246,7 +246,7 @@ function AlbumCard({
 
   return (
     <div
-      className="group flex-shrink-0 w-[175px] cursor-pointer select-none"
+      className="group flex-shrink-0 w-[175px] max-md:w-[146px] cursor-pointer select-none"
       onPointerDown={() => prefetchCollection("album", item.item.id)}
       onClick={handleClick}
       onContextMenu={handleContextMenu}
@@ -354,7 +354,7 @@ function PlaylistCard({
 
   return (
     <div
-      className="group flex-shrink-0 w-[175px] cursor-pointer select-none"
+      className="group flex-shrink-0 w-[175px] max-md:w-[146px] cursor-pointer select-none"
       onPointerDown={() => prefetchCollection("playlist", item.item.id)}
       onClick={handleClick}
       onContextMenu={handleContextMenu}
@@ -440,7 +440,7 @@ function PopularTracksSection({
       />
 
       <ScrollableRow
-        className={`flex gap-[28px] pl-3 pr-3 mt-[12px] overflow-x-auto pb-[2px] ${rowClassName}`}
+        className={`flex gap-[28px] max-md:gap-[14px] pl-3 pr-3 max-md:pl-2.5 mt-[12px] overflow-x-auto pb-[2px] ${rowClassName}`}
       >
         {items.map((item, index) => (
           <PopularItemCard

@@ -1,6 +1,6 @@
 <div align="center">
 
-# Liner
+# DriveMusic
 
 **Modern desktop music streaming player with syllable-synced lyrics and reactive dynamic visuals.**
 
@@ -10,7 +10,7 @@
 
 <br/>
 
-<img src="./.github/assets/album.png" alt="Liner Album Page" width="100%" />
+<img src="./.github/assets/album.png" alt="DriveMusic Album Page" width="100%" />
 
 </div>
 
@@ -22,12 +22,12 @@
   <table>
     <tr>
       <td align="center" width="50%">
-        <img src="./.github/assets/library.png" alt="Liner Library" />
+        <img src="./.github/assets/library.png" alt="DriveMusic Library" />
         <br/>
         <sub><b>Library</b></sub>
       </td>
       <td align="center" width="50%">
-        <img src="./.github/assets/lyrics.png" alt="Liner Fullscreen Lyrics" />
+        <img src="./.github/assets/lyrics.png" alt="DriveMusic Fullscreen Lyrics" />
         <br/>
         <sub><b>Fullscreen lyrics</b></sub>
       </td>
@@ -38,7 +38,7 @@
 ---
 
 > [!NOTE]
-> Liner client connects to the official Liner API backend for music catalog, streaming playback, and synchronized lyrics.
+> DriveMusic client connects to the official DriveMusic API backend for music catalog, streaming playback, and synchronized lyrics.
 
 ---
 
@@ -159,6 +159,6 @@ Bug fixes, small features, translations and docs fixes are welcome. Read [CONTRI
 Liner is distributed under the **Liner Source-Available & Non-Commercial Contribution License**.
 
 - **Allowed**: Personal non-commercial usage, local builds, and upstream contributions.
-- **Prohibited**: Commercial distribution, public competing forks, extracting core algorithms for third-party products, or running any build (a private one included) against servers other than the official Liner services.
+- **Prohibited**: Commercial distribution, public competing forks, extracting core algorithms for third-party products, or running any build (a private one included) against servers other than the official DriveMusic services.
 
 See [LICENSE](./LICENSE) for details.

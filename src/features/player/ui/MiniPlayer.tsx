@@ -806,14 +806,14 @@ function MiniPlayer({
           </div>
         )}
         <div
-          className={`relative grid h-full pointer-events-none ${
+          className={`relative grid h-full pointer-events-none max-md:!grid-cols-[minmax(0,1fr)] ${
             embedded
               ? "grid-cols-[280px_minmax(0,1fr)_260px]"
               : "grid-cols-[286px_minmax(0,1fr)]"
           } ${!usesRoundedStyle && !embedded ? "pb-[4px]" : ""}`}
         >
           <div
-            className="flex h-full items-center gap-[16px] px-[18px] pt-[1px] pointer-events-none cursor-default"
+            className="flex h-full items-center gap-[16px] px-[18px] pt-[1px] pointer-events-none cursor-default max-md:gap-[12px] max-md:pl-[12px] max-md:pr-[132px]"
             onContextMenu={handleTrackContextMenu}
           >
             {trackMenuPosition && (
@@ -913,7 +913,7 @@ function MiniPlayer({
                 aria-label={isLiked ? "Unlike" : "Like"}
                 className={`${iconButtonClass} shrink-0 transition-colors duration-150 pointer-events-auto prevent-seek ${
                   isLiked
-                    ? "text-accent-primary"
+                    ? "text-brand-ink"
                     : "text-text-secondary hover:text-text-primary"
                 }`}
                 onPointerDown={(e) => e.stopPropagation()}
@@ -926,7 +926,7 @@ function MiniPlayer({
           </div>
 
           <div
-            className={`flex h-full items-center pl-[10px] pr-[18px] pointer-events-none ${
+            className={`flex h-full items-center pl-[10px] pr-[18px] pointer-events-none max-md:hidden ${
               embedded ? "col-start-3" : ""
             }`}
           >
@@ -1119,7 +1119,7 @@ function MiniPlayer({
           </div>
         </div>
 
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center max-md:justify-end max-md:pr-[12px]">
           <div
             className="pointer-events-auto flex items-center gap-[8px] prevent-seek cursor-default"
             onPointerDown={(e) => e.stopPropagation()}

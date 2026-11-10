@@ -12,19 +12,19 @@ export interface SidebarProps {
 
 function Sidebar({ searchOpen, onSearchToggle }: SidebarProps) {
   return (
-    <div className="h-full w-[52px] flex flex-col items-center gap-[6px]">
+    <div className="h-full w-[52px] flex flex-col items-center gap-[6px] max-md:w-full">
       {/* one panel for nav and library; hugs its content and scrolls the
           library once it reaches the window bottom */}
-      <div className="w-full min-h-0 flex flex-col rounded-item bg-bg-glass backdrop-blur-[20px]">
-        <nav className="shrink-0 flex flex-col items-center gap-[20px] py-[16px]">
+      <div className="w-full min-h-0 flex flex-col rounded-item bg-bg-glass backdrop-blur-[20px] max-md:h-full max-md:rounded-none max-md:bg-bg-canvas/90 max-md:backdrop-blur-[24px] max-md:border-t max-md:border-border-primary">
+        <nav className="shrink-0 flex flex-col items-center gap-[20px] py-[16px] max-md:h-full max-md:flex-row max-md:justify-around max-md:gap-0 max-md:py-0 max-md:px-[8px]">
           <Link
             to="/"
-            title="Liner"
-            className="flex items-center justify-center cursor-pointer active:scale-95 transition-transform"
+            title="DriveMusic"
+            className="flex items-center justify-center cursor-pointer active:scale-95 transition-transform max-md:hidden"
           >
             <img
               src={logo}
-              alt="Liner"
+              alt="DriveMusic"
               width={30}
               height={23}
               className="h-[23px] w-auto object-contain theme-logo invert dark:invert-0 select-none"
@@ -38,9 +38,10 @@ function Sidebar({ searchOpen, onSearchToggle }: SidebarProps) {
           <SidebarSettingsButton />
         </nav>
 
-        <SidebarLibrary />
+        <div className="contents max-md:hidden">
+          <SidebarLibrary />
+        </div>
       </div>
-
     </div>
   );
 }

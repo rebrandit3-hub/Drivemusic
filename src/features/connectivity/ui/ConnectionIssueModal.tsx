@@ -113,23 +113,23 @@ export default function ConnectionIssueModal() {
             </p>
           </div>
         </div>
-        <DialogActions className="mt-[20px] !flex-nowrap">
+        <DialogActions className="mt-[20px] !flex-nowrap max-sm:!flex-wrap">
           <DialogButton
             variant="primary"
-            className="!min-w-0 !flex-auto !px-[10px] dark:!bg-white dark:!text-black dark:hover:!bg-white/90"
+            className="!min-w-0 max-sm:!min-w-max !flex-auto !px-[10px] dark:!bg-white dark:!text-black dark:hover:!bg-white/90"
             onClick={enterOfflineForIssue}
           >
             {t("offline.use_offline")}
           </DialogButton>
           <DialogButton
-            className="!min-w-0 !flex-auto !px-[10px]"
+            className="!min-w-0 max-sm:!min-w-max !flex-auto !px-[10px]"
             loading={retrying}
             onClick={() => void retry()}
           >
             {t("offline.try_again")}
           </DialogButton>
           <DialogButton
-            className="!min-w-0 !flex-auto !px-[10px] !bg-fill-subtle !text-text-secondary"
+            className="!min-w-0 max-sm:!min-w-max !flex-auto !px-[10px] !bg-fill-subtle !text-text-secondary"
             onClick={dismiss}
           >
             {t("offline.dont_show_again")}

@@ -1,7 +1,7 @@
 # Privacy
 
-What the Liner desktop app sends off your device, to whom, and when. This describes the
-code in this repository. What the Liner server does with the data it receives is not
+What the DriveMusic desktop app sends off your device, to whom, and when. This describes the
+code in this repository. What the DriveMusic server does with the data it receives is not
 covered here.
 
 If you change what the app sends, update this file in the same pull request.
@@ -12,8 +12,8 @@ If you change what the app sends, update this file in the same pull request.
   sends nothing. The error screen's report is only copied to your clipboard when you
   click "Copy error details".
 - **Searches and the music catalog go to YouTube Music directly from your device.** The
-  Liner server is asked only when that fails.
-- **The Liner server gets what it needs for your account:** sign-in, your library and
+  DriveMusic server is asked only when that fails.
+- **The DriveMusic server gets what it needs for your account:** sign-in, your library and
   playlists, what you played (for history and recommendations), lyrics lookups and an
   online heartbeat.
 - **Your own audio files never leave the device.** Not the files, not their names or
@@ -21,7 +21,7 @@ If you change what the app sends, update this file in the same pull request.
 - **There is no hardware or device identifier.** Every id the app generates is a random
   UUID per request, per session or per sign-in.
 
-## Liner server (`api.tryliner.fun`)
+## DriveMusic server (`api.tryliner.fun`)
 
 Every request carries:
 
@@ -70,21 +70,21 @@ If you sign in with your YouTube account (TV device-code sign-in):
 - The tokens are stored in `userData/auth/youtube-session.json`, encrypted with the OS
   keychain when it is available. If it is not, they are stored unencrypted, readable only
   by your user.
-- Your YouTube library is only read, to show it in Liner. It is not sent to the Liner
+- Your YouTube library is only read, to show it in DriveMusic. It is not sent to the DriveMusic
   server. The app does not like, rate or report anything to YouTube.
 - Signing out revokes the token with Google.
 
 ## Other services
 
-| Service                                                                                                                                 | What it gets                                                                                               | When                                                                                                                                                  |
-| --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Discord** (local Discord app)                                                                                                         | Track title, artist, album, cover URL, position, artist picture, and a "Listen on Liner" link to the track | While Rich Presence is on (it is on by default; turn it off in Settings → Discord). Local files show title and artist only, without the link or cover |
-| **SoundCloud**                                                                                                                          | The SoundCloud link you paste, and stream requests                                                         | Only for SoundCloud links and tracks. Free-text searches never go to SoundCloud                                                                       |
-| **Spotify, Apple Music, Deezer**                                                                                                        | The playlist link you paste, with an anonymous guest token                                                 | Importing a playlist                                                                                                                                  |
-| **Google Fonts**                                                                                                                        | Your IP and browser user agent                                                                             | At launch, to load the fonts                                                                                                                          |
-| **Image hosts** (YouTube, Google, SoundCloud, `covers.tryliner.fun`)                                                                    | Requests for cover images                                                                                  | Showing covers                                                                                                                                        |
-| **GitHub releases**, `updates.tryliner.fun`                                                                                             | Your IP and user agent                                                                                     | Update checks: 4 seconds after launch, then every 15 minutes                                                                                          |
-| **Connectivity checks** (`api`, `covers` and `link.tryliner.fun`, `google.com/generate_204`, Cloudflare trace, a traceroute to the API) | Your IP                                                                                                    | When several requests fail in a row, or when you run the check. Results are shown only to you                                                         |
+| Service                                                                                                                                 | What it gets                                                                                                    | When                                                                                                                                                  |
+| --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Discord** (local Discord app)                                                                                                         | Track title, artist, album, cover URL, position, artist picture, and a "Listen on DriveMusic" link to the track | While Rich Presence is on (it is on by default; turn it off in Settings → Discord). Local files show title and artist only, without the link or cover |
+| **SoundCloud**                                                                                                                          | The SoundCloud link you paste, and stream requests                                                              | Only for SoundCloud links and tracks. Free-text searches never go to SoundCloud                                                                       |
+| **Spotify, Apple Music, Deezer**                                                                                                        | The playlist link you paste, with an anonymous guest token                                                      | Importing a playlist                                                                                                                                  |
+| **Google Fonts**                                                                                                                        | Your IP and browser user agent                                                                                  | At launch, to load the fonts                                                                                                                          |
+| **Image hosts** (YouTube, Google, SoundCloud, `covers.tryliner.fun`)                                                                    | Requests for cover images                                                                                       | Showing covers                                                                                                                                        |
+| **GitHub releases**, `updates.tryliner.fun`                                                                                             | Your IP and user agent                                                                                          | Update checks: 4 seconds after launch, then every 15 minutes                                                                                          |
+| **Connectivity checks** (`api`, `covers` and `link.tryliner.fun`, `google.com/generate_204`, Cloudflare trace, a traceroute to the API) | Your IP                                                                                                         | When several requests fail in a row, or when you run the check. Results are shown only to you                                                         |
 
 ## Your own audio files
 
@@ -92,7 +92,7 @@ Files you add under "On this device" are copied into `userData/local-tracks/` an
 from there. Their id is a hash of the file content. The app never:
 
 - uploads the files, their names or their paths;
-- sends their tags to the Liner server or YouTube (no play events, lyrics lookups, radio,
+- sends their tags to the DriveMusic server or YouTube (no play events, lyrics lookups, radio,
   likes, playlist adds or share links for them);
 - looks them up on YouTube to find a replacement.
 

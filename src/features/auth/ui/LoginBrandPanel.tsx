@@ -12,7 +12,7 @@ export function LoginBrandPanel({ title, subtitle }: LoginBrandPanelProps) {
   const { locale, setLocale, t } = useTranslation();
 
   return (
-    <aside className="relative flex min-h-[340px] flex-col overflow-hidden rounded-[14px] bg-black/[0.03] p-[24px] dark:bg-white/[0.035]">
+    <aside className="relative flex min-h-[340px] max-md:min-h-[200px] flex-col overflow-hidden rounded-[14px] bg-black/[0.03] p-[24px] dark:bg-white/[0.035]">
       <img
         src={loginMark}
         alt=""
@@ -27,14 +27,14 @@ export function LoginBrandPanel({ title, subtitle }: LoginBrandPanelProps) {
       <div className="relative flex items-center gap-[10px]">
         <img
           src={logo}
-          alt="Liner"
+          alt="DriveMusic"
           width={45}
           height={35}
           draggable={false}
           className="theme-logo h-[22px] w-auto object-contain select-none"
         />
         <span className="text-heading font-[650] tracking-[-0.03em] text-text-primary">
-          Liner
+          DriveMusic
         </span>
       </div>
 

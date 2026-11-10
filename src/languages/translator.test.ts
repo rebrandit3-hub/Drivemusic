@@ -17,9 +17,12 @@ const mockDict: TranslationDict = {
 
 describe("flatten", () => {
   it("flattens nested object with prefix", () => {
-    const result = flatten({ name: "Liner", nested: { key: "val" } }, "common");
+    const result = flatten(
+      { name: "DriveMusic", nested: { key: "val" } },
+      "common",
+    );
     expect(result).toEqual({
-      "common.name": "Liner",
+      "common.name": "DriveMusic",
       "common.nested.key": "val",
     });
   });
@@ -109,6 +112,6 @@ describe("createTranslatorSync with plurals", () => {
 
   it("falls back to English when key is missing in target locale", () => {
     const tRu = createTranslatorSync("ru");
-    expect(tRu("common.app.name")).toBe("Liner");
+    expect(tRu("common.app.name")).toBe("DriveMusic");
   });
 });

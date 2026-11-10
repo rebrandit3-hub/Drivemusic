@@ -393,7 +393,7 @@ export default function SettingsModal() {
       open={open}
       onOpenChange={(next) => (!next ? handleClose() : undefined)}
       maxWidth={940}
-      className="p-0 h-[720px] !max-h-[90vh] !flex-row overflow-hidden"
+      className="p-0 h-[720px] !max-h-[90vh] !flex-row overflow-hidden max-md:!flex-col max-md:!h-[calc(100dvh-24px)] max-md:!max-h-[calc(100dvh-24px)]"
     >
       <SettingsSidebar
         groups={filteredGroups}

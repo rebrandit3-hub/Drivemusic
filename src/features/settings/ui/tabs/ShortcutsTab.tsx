@@ -234,10 +234,10 @@ export function ShortcutsTab({
           "Toggle audio mute state.",
       },
       showMainWindow: {
-        title: t("settings.shortcuts.show_main_window") || "Show Liner",
+        title: t("settings.shortcuts.show_main_window") || "Show DriveMusic",
         desc:
           t("settings.shortcuts.show_main_window_desc") ||
-          "Bring the main Liner window to the front.",
+          "Bring the main DriveMusic window to the front.",
       },
     }),
     [t],
