@@ -51,7 +51,7 @@ vi.mock("@/languages", () => {
     "login.auth_title_login": "Your music, your way",
     "login.auth_subtitle_login":
       "Sign in and pick up right where you left off.",
-    "login.auth_title_register": "Join Liner",
+    "login.auth_title_register": "Join DriveMusic",
     "login.auth_subtitle_register":
       "Create an account and start building your personal library.",
     "login.profile_setup_title": "Set up your profile",
@@ -208,7 +208,7 @@ describe("LoginPage Multi-Step Registration Flow", () => {
       createAccBtn?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     });
 
-    expect(container.textContent).toContain("Join Liner");
+    expect(container.textContent).toContain("Join DriveMusic");
     expect(container.querySelector("#auth-email")).not.toBeNull();
     expect(container.querySelector("#auth-password")).not.toBeNull();
     expect(container.querySelector("#auth-confirm")).not.toBeNull();
@@ -239,7 +239,7 @@ describe("LoginPage Multi-Step Registration Flow", () => {
     expect(container.querySelector("#auth-form-error")?.textContent).toContain(
       "Enter a valid email address",
     );
-    expect(container.textContent).toContain("Join Liner");
+    expect(container.textContent).toContain("Join DriveMusic");
 
     // Enter valid email and mismatched passwords
     const emailInput = container.querySelector(
@@ -274,7 +274,7 @@ describe("LoginPage Multi-Step Registration Flow", () => {
     expect(container.querySelector("#auth-form-error")?.textContent).toContain(
       "Passwords do not match",
     );
-    expect(container.textContent).toContain("Join Liner");
+    expect(container.textContent).toContain("Join DriveMusic");
 
     // Fix confirm password and submit Step 1
     await act(async () => {
@@ -353,7 +353,7 @@ describe("LoginPage Multi-Step Registration Flow", () => {
       backBtn?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     });
 
-    expect(container.textContent).toContain("Join Liner");
+    expect(container.textContent).toContain("Join DriveMusic");
     expect(
       (container.querySelector("#auth-email") as HTMLInputElement)?.value,
     ).toBe("bob@example.com");

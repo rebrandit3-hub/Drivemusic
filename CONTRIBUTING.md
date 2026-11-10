@@ -1,4 +1,4 @@
-# Contributing to Liner
+# Contributing to DriveMusic
 
 This file is for people sending a change to [tryliner/desktop](https://github.com/tryliner/desktop). Setup for just running the app is in the [README](./README.md).
 
@@ -22,7 +22,7 @@ Search the issue list first. If it is already open, add what you know there.
 
 If you open a new issue, include:
 
-- Liner version (the app version, or the commit you built)
+- DriveMusic version (the app version, or the commit you built)
 - Operating system
 - What you did
 - What you expected
@@ -46,7 +46,7 @@ pnpm dev
 
 ### Simulating outages
 
-Set `LINER_SIMULATE` before `pnpm dev`, or put it in `.env.local`, to test how the app behaves when YouTube or Liner's servers fail. Packaged builds ignore it.
+Set `LINER_SIMULATE` before `pnpm dev`, or put it in `.env.local`, to test how the app behaves when YouTube or DriveMusic's servers fail. Packaged builds ignore it.
 
 | Value             | Effect                                                                                                                 |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------- |

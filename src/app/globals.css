@@ -603,3 +603,29 @@ html[data-hover-reset] [data-window-controls] button:hover {
 .lyrics-edge-fog[data-at-bottom] {
   --lyrics-fog-bottom: 0%;
 }
+
+/* Mobile / narrow windows: edge-to-edge shell, no tap flash, no font
+   inflation, and dynamic viewport height so mobile browser chrome doesn't
+   cut off the player. */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 767.98px) {
+  html,
+  body,
+  #root {
+    height: 100dvh;
+  }
+  body {
+    padding: 0 !important;
+    padding-top: env(safe-area-inset-top) !important;
+  }
+  input,
+  textarea,
+  select {
+    font-size: max(16px, 1em);
+  }
+}

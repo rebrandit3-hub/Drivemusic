@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { telemetry, setTelemetryEnabled, isTelemetryEnabled } from "./index";
 
-describe("Liner Desktop Telemetry Module", () => {
+describe("DriveMusic Desktop Telemetry Module", () => {
   const originalFetch = globalThis.fetch;
 
   beforeEach(() => {

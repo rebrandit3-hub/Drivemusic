@@ -21,7 +21,7 @@ export function SidebarSettingsButton() {
         type="button"
         aria-pressed={settingsOpen}
         onClick={toggleSettings}
-        className="group relative inline-flex items-center justify-center bg-transparent border-0 p-0 cursor-pointer active:scale-[0.96] transition-transform duration-100"
+        className="group relative inline-flex items-center justify-center max-md:min-w-[44px] max-md:min-h-[44px] touch-manipulation bg-transparent border-0 p-0 cursor-pointer active:scale-[0.96] transition-transform duration-100"
       >
         <Icon
           size={26}

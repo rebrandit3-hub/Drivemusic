@@ -1,15 +1,15 @@
 # Storage
 
-Where Liner keeps data on the device, what "Clear cache" removes, and where new data
+Where DriveMusic keeps data on the device, what "Clear cache" removes, and where new data
 should go.
 
 All paths below are under Electron's `userData` folder:
 
-| OS      | `userData`                                                      |
-| ------- | --------------------------------------------------------------- |
-| Linux   | `~/.config/@liner/client` (dev) or `~/.config/Liner` (packaged) |
-| Windows | `%APPDATA%\Liner`                                               |
-| macOS   | `~/Library/Application Support/Liner`                           |
+| OS      | `userData`                                                        |
+| ------- | ----------------------------------------------------------------- |
+| Linux   | `~/.config/drivemusic` (dev) or `~/.config/DriveMusic` (packaged) |
+| Windows | `%APPDATA%\DriveMusic`                                            |
+| macOS   | `~/Library/Application Support/DriveMusic`                        |
 
 ## IndexedDB: `liner_db_v1`
 
@@ -29,13 +29,13 @@ played tracks are evicted (`src/shared/storage/audioCache.ts`).
 
 ## Files managed by the main process
 
-| Path                               | Holds                                          | Code                               |
-| ---------------------------------- | ---------------------------------------------- | ---------------------------------- |
-| `auth/session.json`                | Liner session, encrypted with `safeStorage`    | `electron/auth-session-store.ts`   |
-| `auth/youtube-session.json`        | YouTube account tokens, encrypted the same way | `electron/auth-session-ipc.ts`     |
-| `local-tracks/library.json`        | Index of imported audio files                  | `electron/local-tracks/library.ts` |
-| `local-tracks/audio/<hash>.<ext>`  | Copies of imported audio files                 | same                               |
-| `local-tracks/covers/<hash>.<ext>` | Artwork taken from their tags                  | same                               |
+| Path                               | Holds                                            | Code                               |
+| ---------------------------------- | ------------------------------------------------ | ---------------------------------- |
+| `auth/session.json`                | DriveMusic session, encrypted with `safeStorage` | `electron/auth-session-store.ts`   |
+| `auth/youtube-session.json`        | YouTube account tokens, encrypted the same way   | `electron/auth-session-ipc.ts`     |
+| `local-tracks/library.json`        | Index of imported audio files                    | `electron/local-tracks/library.ts` |
+| `local-tracks/audio/<hash>.<ext>`  | Copies of imported audio files                   | same                               |
+| `local-tracks/covers/<hash>.<ext>` | Artwork taken from their tags                    | same                               |
 
 Imported files are copies, so the originals can be moved or deleted. They are served to
 the renderer through the `liner-local://audio/<hash>` and `liner-local://cover/<hash>`
