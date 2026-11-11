@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { formatBytes } from "@/library/downloads";
 import { useLibrary } from "@/library/store";
-import { disconnect, getClientId, isConnected, setClientId } from "@/spotify/auth";
 
 function Row({ label, value, to, onClick }: { label: string; value?: string; to?: string; onClick?: () => void }) {
   const inner = (
@@ -24,7 +23,6 @@ export default function Settings() {
   const downloads = useLibrary((s) => s.downloads);
   const [quota, setQuota] = useState<{ usage: number; quota: number } | null>(null);
   const [persisted, setPersisted] = useState<boolean | null>(null);
-  const [spotify, setSpotify] = useState(isConnected());
   const bytes = Object.values(downloads).reduce((s, m) => s + m.bytes, 0);
 
   useEffect(() => {
@@ -48,18 +46,8 @@ export default function Settings() {
         <Row label="Downloads protected from cleanup" value={persisted ? "Yes" : "Not yet — granted after your first download"} />
       )}
 
-      <h2 className="px-4 pb-1 pt-6 text-[13px] font-bold uppercase tracking-wider text-faint">Spotify import</h2>
-      <Row label="Connection" value={spotify ? "Connected" : "Not connected"} to="/import" />
-      {getClientId() && (
-        <Row
-          label="Reset Spotify Client ID"
-          onClick={() => {
-            setClientId("");
-            disconnect();
-            setSpotify(false);
-          }}
-        />
-      )}
+      <h2 className="px-4 pb-1 pt-6 text-[13px] font-bold uppercase tracking-wider text-faint">Spotify</h2>
+      <Row label="Import a playlist" to="/import" />
 
       <h2 className="px-4 pb-1 pt-6 text-[13px] font-bold uppercase tracking-wider text-faint">About</h2>
       <Row label="Version" value={__APP_VERSION__} />

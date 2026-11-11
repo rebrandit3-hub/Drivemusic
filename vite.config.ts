@@ -1,12 +1,29 @@
 import { defineConfig } from "vitest/config";
+import { loadEnv, type Plugin } from "vite";
+import { handlePlaylistRequest } from "./server/spotifyPlaylist";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 import path from "node:path";
 import pkg from "./package.json" with { type: "json" };
 
-export default defineConfig({
+/** Serves /api/* during `pnpm dev` / `pnpm preview`, like the hosting functions do. */
+function devApi(env: Record<string, string>): Plugin {
+  const mount = (server: { middlewares: { use: (fn: (req: any, res: any, next: () => void) => void) => void } }): void => {
+    server.middlewares.use(async (req, res, next) => {
+      if (!req.url?.startsWith("/api/spotify-playlist")) return next();
+      const { status, body } = await handlePlaylistRequest(new URL(req.url, "http://localhost"), env);
+      res.statusCode = status;
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify(body));
+    });
+  };
+  return { name: "drivemusic-dev-api", configureServer: mount, configurePreviewServer: mount };
+}
+
+export default defineConfig(({ mode }) => ({
   plugins: [
+    devApi(loadEnv(mode, process.cwd(), "SPOTIFY_")),
     react(),
     tailwindcss(),
     VitePWA({
@@ -60,4 +77,4 @@ export default defineConfig({
     globals: true,
     setupFiles: ["src/test/setup.ts"],
   },
-});
+}));

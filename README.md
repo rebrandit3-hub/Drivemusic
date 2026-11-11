@@ -32,20 +32,28 @@ song where it stopped (with backoff), and downloaded songs play from local stora
 pnpm install
 pnpm dev        # open the printed URL on your phone (same Wi-Fi)
 pnpm test
-pnpm build      # static site in dist/ — deploy to any static host (HTTPS needed for install + offline)
+pnpm build      # site in dist/ + the api/ function — deploy to Vercel (HTTPS needed for install + offline)
 ```
 
 Install on the phone: open the deployed URL → Share → *Add to Home Screen* (iOS)
 or the browser menu → *Install app* (Android).
 
-## Spotify import setup
+## Spotify import
+
+Users copy a playlist's share link in Spotify and paste it in the app — no
+Spotify login, no setup. The server reads the public playlist with the app's
+own Spotify credentials (`/api/spotify-playlist`), then each song is matched in
+the catalog on the phone.
+
+One-time setup for the site owner:
 
 1. Create an app at <https://developer.spotify.com/dashboard> (Web API).
-2. Add your app URL (for example `https://your-domain.com/`) as a Redirect URI.
-3. Put the Client ID in `.env.local` as `VITE_SPOTIFY_CLIENT_ID=…`, or paste it in the app.
+2. Set `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET` as environment variables
+   on the host (Vercel: Project Settings → Environment Variables), or in
+   `.env.local` for `pnpm dev`.
 
-New Spotify apps start in development mode: add the Spotify accounts that will
-import (up to 25) under *User Management* in the dashboard.
+Limits: the playlist must be public; Spotify-made mixes (Discover Weekly,
+Daily Mix…) can't be read by third-party apps.
 
 ## Native app (later)
 
