@@ -1,164 +1,87 @@
-<div align="center">
-
 # DriveMusic
 
-**Modern desktop music streaming player with syllable-synced lyrics and reactive dynamic visuals.**
+A mobile music app: stream, search, build playlists, import from Spotify and
+download songs to play offline. Built as an installable web app (PWA), ready to
+be wrapped as a native Android/iOS app with Capacitor.
 
-[![CI](https://img.shields.io/github/actions/workflow/status/tryliner/desktop/ci.yml?branch=main&style=flat-square&label=CI&labelColor=0d0d10&logo=githubactions&logoColor=white)](https://github.com/tryliner/desktop/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/tryliner/desktop?style=flat-square&label=release&labelColor=0d0d10&color=7a4dff)](https://github.com/tryliner/desktop/releases/latest) [![Downloads](https://img.shields.io/github/downloads/tryliner/desktop/total?style=flat-square&label=downloads&labelColor=0d0d10&color=4d71ff)](https://github.com/tryliner/desktop/releases) [![Platforms](https://img.shields.io/badge/platforms-Windows%20·%20macOS%20·%20Linux-2ec4b6?style=flat-square&labelColor=0d0d10)](https://github.com/tryliner/desktop/releases/latest) [![Discussions](https://img.shields.io/github/discussions/tryliner/desktop?style=flat-square&label=discussions&labelColor=0d0d10&color=3ddc97)](https://github.com/tryliner/desktop/discussions) [![Discord](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fdiscord.com%2Fapi%2Fv10%2Finvites%2Fliner%3Fwith_counts%3Dtrue&query=%24.approximate_member_count&suffix=%20members&label=discord&style=flat-square&labelColor=0d0d10&color=5865f2&logo=discord&logoColor=white)](https://discord.gg/liner) [![License](https://img.shields.io/badge/license-source--available-534dff?style=flat-square&labelColor=0d0d10)](./LICENSE)
+## Features
 
-[Preview](#preview) • [Architecture](#architecture) • [Getting Started](#getting-started) • [Building](#building) • [Docs](#docs) • [Contributing](#contributing) • [License](#license)
+- **Home** — greeting, quick picks, genre chips, trending songs and playlists, Top 10 chart
+- **Search** — any song (YouTube), plus the open catalog's songs, artists and playlists
+- **Your Library** — Liked Songs, Downloads, your playlists (create, rename, delete)
+- **Now Playing** — full-screen player, seek, shuffle, repeat, queue, lock-screen controls
+- **Offline** — download open-catalog songs or whole playlists, and add your own music files; both play with no connection
+- **Spotify import** — paste a playlist link or pick one of yours; every song is matched in the catalog
 
-<br/>
+## Music sources
 
-<img src="./.github/assets/album.png" alt="DriveMusic Album Page" width="100%" />
+| Source | What | Offline |
+|---|---|---|
+| YouTube | Search any song; plays in YouTube's official embedded player | No — streaming only |
+| [Audius](https://audius.org) open catalog | Independent artists, free API that allows streaming | Yes — download in the app |
+| Your files | MP3 / M4A / WAV / FLAC / OGG picked from the phone | Yes — copied into the app |
 
-</div>
+YouTube's rules for embedded players apply: the video stays visible while it
+plays (large in Now Playing, a floating 200×200 player while browsing; the ×
+pauses and hides it), it pauses when the app is in the background, and it is
+never downloaded. Search runs through `/api/youtube-search`, which keeps the
+API key on the server and caches results: the free YouTube quota allows about
+100 new searches a day (request more from Google when needed).
 
----
+Imported Spotify songs use the open catalog when there's a confident match
+(downloadable); the rest become YouTube songs, looked up the first time they're
+played.
 
-## Preview
+## Playback
 
-<div align="center">
-  <table>
-    <tr>
-      <td align="center" width="50%">
-        <img src="./.github/assets/library.png" alt="DriveMusic Library" />
-        <br/>
-        <sub><b>Library</b></sub>
-      </td>
-      <td align="center" width="50%">
-        <img src="./.github/assets/lyrics.png" alt="DriveMusic Fullscreen Lyrics" />
-        <br/>
-        <sub><b>Fullscreen lyrics</b></sub>
-      </td>
-    </tr>
-  </table>
-</div>
+Two `<audio>` elements: one plays, the other preloads the next song, so track
+changes are instant. Audio isn't routed through WebAudio, which keeps it alive
+when the phone locks or changes outputs. Stalls and network errors reload the
+song where it stopped (with backoff), and downloaded songs play from local storage.
 
----
-
-> [!NOTE]
-> DriveMusic client connects to the official DriveMusic API backend for music catalog, streaming playback, and synchronized lyrics.
-
----
-
-## Architecture
-
-The renderer follows [Feature-Sliced Design](https://feature-sliced.design): imports only point down the layers (`app` → `widgets` → `features` → `entities` → `shared`).
-
-```
-liner/desktop/
-├── electron/
-│   ├── main.ts              # Main process: windows, IPC, updates, deep links
-│   ├── preload.ts           # Context bridge between the renderer and the main process
-│   ├── local-tracks/        # Imported audio files and the liner-local:// protocol
-│   ├── youtube/             # Helpers for the YouTube playback fallback
-│   ├── overlay.ts           # Floating overlay player window
-│   ├── discord.ts           # Discord Rich Presence
-│   ├── crypto.ts            # In-memory WebAssembly request signer
-│   └── signer.ts            # Embedded WebAssembly binary
-├── native/                  # Windows snap preview add-on
-├── src/
-│   ├── app/                 # App shell, routes, providers, global styles
-│   ├── widgets/             # Screen blocks: sidebar, header, player bar, fullscreen player, modals
-│   ├── features/            # player, lyrics, library, search, collection, settings, overlay, …
-│   ├── entities/            # track, playlist, artist, user
-│   ├── shared/              # API client, storage, UI kit, contracts, utilities
-│   ├── languages/           # Translations for 11 languages
-│   └── main.tsx             # Vite entry point
-├── docs/                    # Design, storage, privacy, translations, FAQ
-├── package.json
-└── vite.config.ts
-```
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- **Node.js** `v22+` and **pnpm** `v10+`
-- Windows 10/11, macOS or Linux
-
----
-
-### Setup
+## Run
 
 ```bash
-git clone https://github.com/tryliner/desktop.git
-cd desktop
 pnpm install
-```
-
----
-
-### Running in Development
-
-```bash
-# Electron app with Vite hot reload
-pnpm dev
-```
-
----
-
-## Testing
-
-```bash
-# Tests only
+pnpm dev        # open the printed URL on your phone (same Wi-Fi)
 pnpm test
-
-# Everything CI runs on a pull request: lint, format check, types, build, tests
-pnpm check
+pnpm build      # site in dist/ + the api/ function — deploy to Vercel (HTTPS needed for install + offline)
 ```
 
----
+Install on the phone: open the deployed URL → Share → *Add to Home Screen* (iOS)
+or the browser menu → *Install app* (Android).
 
-## Building
+## Spotify import
+
+Users copy a playlist's share link in Spotify and paste it in the app — no
+Spotify login, no setup. The server reads the public playlist with the app's
+own Spotify credentials (`/api/spotify-playlist`), then each song is matched in
+the catalog on the phone.
+
+One-time setup for the site owner:
+
+1. Create an app at <https://developer.spotify.com/dashboard> (Web API).
+2. Set `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET` as environment variables
+   on the host (Vercel: Project Settings → Environment Variables), or in
+   `.env.local` for `pnpm dev`.
+
+## YouTube search setup
+
+1. Google Cloud Console → create a project → enable **YouTube Data API v3**.
+2. Credentials → Create API key (restrict it to the YouTube Data API).
+3. Set `YOUTUBE_API_KEY` on the host (or in `.env.local`).
+
+Limits: the playlist must be public; Spotify-made mixes (Discover Weekly,
+Daily Mix…) can't be read by third-party apps.
+
+## Native app (later)
 
 ```bash
-# Linux (AppImage & .deb)
-pnpm electron:build:linux
-
-# Windows (.exe installer)
-pnpm electron:build:win
-
-# macOS (.dmg & .zip, for both Intel and Apple Silicon)
-pnpm electron:build:mac
+pnpm add @capacitor/android @capacitor/ios
+npx cap add android   # needs Android Studio
+npx cap add ios       # needs Xcode on a Mac
+pnpm cap:sync
 ```
 
-The macOS build produces `x64` (Intel) and `arm64` (Apple Silicon) packages. To build only one, add `--arm64` or `--x64`. Packages are placed in the `release/` directory.
-
----
-
-## Docs
-
-- [Design guidelines](./docs/DESIGN.md): tokens, glass surfaces, motion and building blocks
-- [Storage](./docs/STORAGE.md): where data lives on your device and what "Clear cache" removes
-- [Privacy](./docs/PRIVACY.md): everything the app sends off your device
-- [Translations](./docs/I18N.md): adding strings, plurals and languages
-- [FAQ](./docs/FAQ.md): answers to the most common problems
-
----
-
-## Contributing
-
-Bug fixes, small features, translations and docs fixes are welcome. Read [CONTRIBUTING.md](./CONTRIBUTING.md) and [AGENTS.md](./AGENTS.md) before you open a pull request, and report bugs with the [issue forms](https://github.com/tryliner/desktop/issues/new/choose). Questions and ideas go to [Discussions](https://github.com/tryliner/desktop/discussions), security issues to [SECURITY.md](./SECURITY.md). The [license](./LICENSE) limits what a fork is allowed to do.
-
----
-
-## Special Thanks
-
-- [`@braccato/core`](https://github.com/better-lyrics/braccato) & `@braccato/parsers` — Synced lyrics components and format parsers.
-- [Kawarp](https://github.com/better-lyrics/kawarp) — WebGL background shader the fullscreen background is based on.
-- [Solar Icons](https://solar-icons.com) & [MingCute Icons](https://www.mingcute.com) — Icon collections.
-
----
-
-## License
-
-Liner is distributed under the **Liner Source-Available & Non-Commercial Contribution License**.
-
-- **Allowed**: Personal non-commercial usage, local builds, and upstream contributions.
-- **Prohibited**: Commercial distribution, public competing forks, extracting core algorithms for third-party products, or running any build (a private one included) against servers other than the official DriveMusic services.
-
-See [LICENSE](./LICENSE) for details.
+For background playback in the native build, add a media-session/background-audio
+plugin and enable the audio background mode on iOS.
