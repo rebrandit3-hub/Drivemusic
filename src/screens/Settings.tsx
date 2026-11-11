@@ -51,10 +51,10 @@ export default function Settings() {
 
       <h2 className="px-4 pb-1 pt-6 text-[13px] font-bold uppercase tracking-wider text-faint">About</h2>
       <Row label="Version" value={__APP_VERSION__} />
-      <Row label="Music catalog" value="Audius (open, artist-uploaded)" />
+      <Row label="Search" value="YouTube + Audius open catalog" />
       <p className="px-4 pt-6 text-[12px] leading-relaxed text-faint">
-        DriveMusic streams from the Audius open music network. Songs you download are saved on this phone and play
-        without a connection. Your library stays on this device.
+        YouTube songs play in YouTube's own player and need a connection. Open-catalog songs (Audius) and the music
+        files you add can be saved on this phone and play without internet. Your library stays on this device.
       </p>
     </div>
   );

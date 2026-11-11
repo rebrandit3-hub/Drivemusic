@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowDownCircle, CheckCircle2, ChevronLeft, MoreHorizontal, Shuffle } from "lucide-react";
-import { downloadMany, useDownloadProgress } from "@/library/downloads";
+import { canDownload, downloadMany, useDownloadProgress } from "@/library/downloads";
 import { useLibrary } from "@/library/store";
 import { player } from "@/player/engine";
 import { usePlayer } from "@/player/store";
@@ -37,7 +37,8 @@ export function CollectionView({ title, subtitle, artwork, coverIcon, seed, trac
   const downloads = useLibrary((s) => s.downloads);
   const busy = useDownloadProgress((s) => tracks.some((t) => s.progress[t.id] !== undefined));
   const playingHere = context === title && isPlaying;
-  const allDownloaded = tracks.length > 0 && tracks.every((t) => downloads[t.id]);
+  const savable = tracks.filter(canDownload);
+  const allDownloaded = savable.length > 0 && savable.every((t) => downloads[t.id]);
   const seconds = tracks.reduce((sum, t) => sum + (t.duration || 0), 0);
   const h = hueFor(seed);
 
@@ -87,12 +88,17 @@ export function CollectionView({ title, subtitle, artwork, coverIcon, seed, trac
         </p>
 
         <div className="mt-3 flex items-center gap-1">
+          {savable.length > 0 && (
           <button
             aria-label={allDownloaded ? "Downloaded" : "Download all"}
-            disabled={!tracks.length || allDownloaded || busy}
+            disabled={allDownloaded || busy}
             onClick={() => {
-              toast(`Downloading ${tracks.length} songs`);
-              void downloadMany(tracks).then(() => toast("Downloads finished"));
+              toast(
+                savable.length === tracks.length
+                  ? `Downloading ${savable.length} songs`
+                  : `Downloading ${savable.length} of ${tracks.length} songs (YouTube songs stream only)`,
+              );
+              void downloadMany(savable).then(() => toast("Downloads finished"));
             }}
             className="flex h-11 w-11 items-center justify-center text-muted disabled:opacity-100"
           >
@@ -102,6 +108,7 @@ export function CollectionView({ title, subtitle, artwork, coverIcon, seed, trac
               <ArrowDownCircle className={cn("h-7 w-7", busy && "animate-pulse text-mint")} />
             )}
           </button>
+          )}
           {onMore && (
             <button aria-label="More options" onClick={onMore} className="flex h-11 w-11 items-center justify-center text-muted">
               <MoreHorizontal className="h-6 w-6" />

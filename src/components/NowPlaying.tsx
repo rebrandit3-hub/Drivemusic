@@ -14,6 +14,7 @@ import { Cover } from "./Cover";
 import { PlayIcon } from "./PlayButton";
 import { toast } from "./Toast";
 import { TrackSheet } from "./TrackSheet";
+import { VIDEO_SLOT_ATTR } from "./VideoSurface";
 import type { Track } from "@/lib/types";
 
 function Seekbar() {
@@ -133,6 +134,12 @@ export function NowPlaying() {
           <QueueView onPick={() => setShowQueue(false)} />
         ) : (
           <div className="flex flex-1 items-center justify-center py-2">
+            {track.source === "youtube" ? (
+              <div
+                {...{ [VIDEO_SLOT_ATTR]: "" }}
+                className="aspect-square w-full max-w-[min(100%,46dvh)] rounded-lg bg-black"
+              />
+            ) : (
             <Cover
               src={track.artwork}
               seed={track.id}
@@ -142,6 +149,7 @@ export function NowPlaying() {
                 !isPlaying && "scale-[0.92]",
               )}
             />
+            )}
           </div>
         )}
 
@@ -160,6 +168,7 @@ export function NowPlaying() {
                 {track.artist}
               </button>
             </div>
+            {track.source !== "youtube" && (
             <button
               aria-label={downloaded ? "Downloaded" : "Download"}
               disabled={downloaded || downloading}
@@ -177,6 +186,7 @@ export function NowPlaying() {
                 <ArrowDownCircle className={cn("h-6 w-6", downloading && "animate-pulse text-mint")} />
               )}
             </button>
+            )}
             <button
               aria-label={liked ? "Remove from Liked Songs" : "Like"}
               onClick={() => useLibrary.getState().toggleLike(track)}

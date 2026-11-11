@@ -7,17 +7,30 @@ be wrapped as a native Android/iOS app with Capacitor.
 ## Features
 
 - **Home** — greeting, quick picks, genre chips, trending songs and playlists, Top 10 chart
-- **Search** — songs, artists and playlists, genre browsing
+- **Search** — any song (YouTube), plus the open catalog's songs, artists and playlists
 - **Your Library** — Liked Songs, Downloads, your playlists (create, rename, delete)
 - **Now Playing** — full-screen player, seek, shuffle, repeat, queue, lock-screen controls
-- **Offline** — download a song or a whole playlist; it plays with no connection
+- **Offline** — download open-catalog songs or whole playlists, and add your own music files; both play with no connection
 - **Spotify import** — paste a playlist link or pick one of yours; every song is matched in the catalog
 
-## Music source
+## Music sources
 
-Songs stream from [Audius](https://audius.org), an open music network whose API
-allows free streaming by third-party apps. The library (likes, playlists,
-downloads) is stored on the phone.
+| Source | What | Offline |
+|---|---|---|
+| YouTube | Search any song; plays in YouTube's official embedded player | No — streaming only |
+| [Audius](https://audius.org) open catalog | Independent artists, free API that allows streaming | Yes — download in the app |
+| Your files | MP3 / M4A / WAV / FLAC / OGG picked from the phone | Yes — copied into the app |
+
+YouTube's rules for embedded players apply: the video stays visible while it
+plays (large in Now Playing, a floating 200×200 player while browsing; the ×
+pauses and hides it), it pauses when the app is in the background, and it is
+never downloaded. Search runs through `/api/youtube-search`, which keeps the
+API key on the server and caches results: the free YouTube quota allows about
+100 new searches a day (request more from Google when needed).
+
+Imported Spotify songs use the open catalog when there's a confident match
+(downloadable); the rest become YouTube songs, looked up the first time they're
+played.
 
 ## Playback
 
@@ -51,6 +64,12 @@ One-time setup for the site owner:
 2. Set `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET` as environment variables
    on the host (Vercel: Project Settings → Environment Variables), or in
    `.env.local` for `pnpm dev`.
+
+## YouTube search setup
+
+1. Google Cloud Console → create a project → enable **YouTube Data API v3**.
+2. Credentials → Create API key (restrict it to the YouTube Data API).
+3. Set `YOUTUBE_API_KEY` on the host (or in `.env.local`).
 
 Limits: the playlist must be public; Spotify-made mixes (Discover Weekly,
 Daily Mix…) can't be read by third-party apps.

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowDown, Heart, ListPlus, Pencil, Search, Trash2 } from "lucide-react";
+import { ArrowDown, FolderOpen, Heart, ListPlus, Pencil, Plus, Search, Smartphone, Trash2 } from "lucide-react";
+import { useRef } from "react";
+import { ACCEPTED, importFiles } from "@/library/localFiles";
 import { audius } from "@/api/audius";
 import { CollectionView } from "@/components/CollectionView";
 import { Sheet, SheetItem } from "@/components/Sheet";
@@ -25,7 +27,9 @@ export function LikedScreen() {
 
 export function DownloadsScreen() {
   const downloads = useLibrary((s) => s.downloads);
-  const metas = Object.values(downloads).sort((a, b) => b.savedAt - a.savedAt);
+  const metas = Object.values(downloads)
+    .filter((m) => m.track.source !== "local")
+    .sort((a, b) => b.savedAt - a.savedAt);
   const bytes = metas.reduce((sum, m) => sum + m.bytes, 0);
   const [confirm, setConfirm] = useState(false);
   return (
@@ -53,6 +57,75 @@ export function DownloadsScreen() {
         </div>
       </Sheet>
     </>
+  );
+}
+
+/** Pick audio files on the phone and copy them into the app. */
+export function AddFilesButton({ className = "", label = "Add music files" }: { className?: string; label?: string }) {
+  const input = useRef<HTMLInputElement>(null);
+  const [progress, setProgress] = useState<string | null>(null);
+  return (
+    <>
+      <input
+        ref={input}
+        type="file"
+        accept={ACCEPTED}
+        multiple
+        hidden
+        onChange={async (e) => {
+          const files = Array.from(e.target.files ?? []);
+          e.target.value = "";
+          if (!files.length) return;
+          setProgress(`Adding 0 of ${files.length}`);
+          const { added, skipped } = await importFiles(files, (done, total) => setProgress(`Adding ${done} of ${total}`));
+          setProgress(null);
+          toast(
+            skipped.length
+              ? `Added ${added.length} · ${skipped.length} couldn't be read`
+              : `Added ${added.length} ${added.length === 1 ? "song" : "songs"}`,
+          );
+        }}
+      />
+      <button
+        disabled={progress !== null}
+        onClick={() => input.current?.click()}
+        className={`flex items-center justify-center gap-2 rounded-full bg-text px-5 py-2.5 text-sm font-bold text-bg disabled:opacity-70 ${className}`}
+      >
+        {progress ? <Spinner className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+        {progress ?? label}
+      </button>
+    </>
+  );
+}
+
+export function LocalFilesScreen() {
+  const downloads = useLibrary((s) => s.downloads);
+  const metas = Object.values(downloads)
+    .filter((m) => m.track.source === "local")
+    .sort((a, b) => b.savedAt - a.savedAt);
+  const bytes = metas.reduce((sum, m) => sum + m.bytes, 0);
+  return (
+    <CollectionView
+      title="Music on this phone"
+      subtitle={metas.length ? `${formatBytes(bytes)} · always available offline` : "Your own files, always offline"}
+      seed="local-files"
+      coverIcon={<Smartphone className="h-1/3 w-1/3" />}
+      tracks={metas.map((m) => m.track)}
+      empty={
+        <EmptyState
+          icon={<FolderOpen />}
+          title="Add the music you own"
+          body="Pick MP3, M4A, WAV, FLAC or OGG files from your phone. They're copied into DriveMusic and play without internet."
+          action={<AddFilesButton />}
+        />
+      }
+    >
+      {metas.length > 0 && (
+        <div className="px-4 pb-2">
+          <AddFilesButton className="w-full !bg-elevated !text-text" label="Add more files" />
+        </div>
+      )}
+    </CollectionView>
   );
 }
 

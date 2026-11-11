@@ -1,4 +1,5 @@
 import { audius } from "@/api/audius";
+import { resolvePlaceholder } from "@/api/youtube";
 import { getOfflineBlob } from "@/library/downloads";
 import { useLibrary } from "@/library/store";
 import type { Track } from "@/lib/types";
@@ -9,6 +10,7 @@ import {
   shuffleAround,
 } from "./queue";
 import { currentTrack, usePlayer } from "./store";
+import { YouTubeBackend } from "./youtube";
 
 const SESSION_KEY = "drivemusic:player:v1";
 const MAX_RETRIES = 4;
@@ -36,6 +38,35 @@ class PlayerEngine {
   private stallTimer: ReturnType<typeof setTimeout> | null = null;
   private loadToken = 0;
   private resumeAt = 0;
+  /** which backend owns playback right now */
+  private mode: "audio" | "youtube" = "audio";
+  private yt = new YouTubeBackend({
+    onPlaying: () => {
+      if (this.mode !== "youtube") return;
+      usePlayer.setState({ isPlaying: true, buffering: false, error: null });
+    },
+    onPaused: () => {
+      if (this.mode !== "youtube") return;
+      usePlayer.setState({ isPlaying: false, buffering: false });
+      this.saveSession(true);
+    },
+    onBuffering: () => {
+      if (this.mode === "youtube") usePlayer.setState({ buffering: true });
+    },
+    onEnded: () => {
+      if (this.mode === "youtube") this.advance(true);
+    },
+    onError: (message) => {
+      if (this.mode !== "youtube") return;
+      usePlayer.setState({ error: message, isPlaying: false, buffering: false });
+      this.skipSoon();
+    },
+    onTime: (position, duration) => {
+      if (this.mode !== "youtube") return;
+      usePlayer.setState({ position, duration: duration || usePlayer.getState().duration });
+      this.saveSession();
+    },
+  });
 
   private get cur(): Slot {
     return this.ensure()[this.active];
@@ -61,7 +92,59 @@ class PlayerEngine {
   }
 
   private isActive(el: HTMLAudioElement) {
-    return this.slots !== null && this.cur.el === el;
+    return this.mode === "audio" && this.slots !== null && this.cur.el === el;
+  }
+
+  private time() {
+    if (this.mode === "youtube") return this.yt.time();
+    return this.slots ? this.cur.el.currentTime : 0;
+  }
+
+  /** After an unplayable song, move on instead of stopping the music. */
+  private skipSoon() {
+    const s = usePlayer.getState();
+    const id = currentTrack(s)?.id;
+    if (nextIndex(s.queue.length, s.index, s.repeat, false) === null) return;
+    setTimeout(() => {
+      if (currentTrack(usePlayer.getState())?.id === id) this.advance(false);
+    }, 1500);
+  }
+
+  /** Swap in the resolved version of a song everywhere it appears. */
+  private replaceTrack(track: Track) {
+    const swap = (list: Track[]) => list.map((t) => (t.id === track.id ? track : t));
+    usePlayer.setState((s) => ({ queue: swap(s.queue), baseQueue: swap(s.baseQueue) }));
+    useLibrary.getState().replaceTrack(track);
+  }
+
+  private async loadYouTube(track: Track, autoplay: boolean, startAt: number, token: number) {
+    for (const slot of this.ensure()) slot.el.pause();
+    this.mode = "youtube";
+    let playable: Track | null = track;
+    if (!track.videoId) {
+      try {
+        playable = await resolvePlaceholder(track);
+      } catch {
+        playable = null;
+      }
+      if (token !== this.loadToken) return;
+      if (!playable?.videoId) {
+        usePlayer.setState({ error: "Couldn't find this song.", buffering: false, isPlaying: false });
+        this.skipSoon();
+        return;
+      }
+      this.replaceTrack(playable);
+      this.updateMetadata(playable);
+    }
+    if (autoplay) useLibrary.getState().addRecent(playable);
+    try {
+      await this.yt.load(playable.videoId!, startAt, autoplay);
+    } catch (err) {
+      if (token === this.loadToken) {
+        usePlayer.setState({ error: (err as Error).message, buffering: false, isPlaying: false });
+      }
+    }
+    this.saveSession(true);
   }
 
   private bind(el: HTMLAudioElement) {
@@ -150,6 +233,7 @@ class PlayerEngine {
 
   private async sourceFor(track: Track): Promise<{ src: string; objectUrl: string | null }> {
     const blob = await getOfflineBlob(track.id);
+    if (!blob && track.source === "local") throw new Error("File missing");
     if (blob) {
       const objectUrl = URL.createObjectURL(blob);
       return { src: objectUrl, objectUrl };
@@ -172,7 +256,7 @@ class PlayerEngine {
     const next = nextIndex(s.queue.length, s.index, s.repeat, true);
     if (next === null || next === s.index) return;
     const track = s.queue[next];
-    if (!track || this.spare.trackId === track.id) return;
+    if (!track || track.source === "youtube" || this.spare.trackId === track.id) return;
     void this.fill(this.spare, track).catch(() => {
       this.spare.trackId = null;
     });
@@ -188,6 +272,12 @@ class PlayerEngine {
       error: null,
     });
     this.updateMetadata(track);
+
+    if (track.source === "youtube") return this.loadYouTube(track, autoplay, startAt, token);
+    if (this.mode === "youtube") {
+      this.yt.stop();
+      this.mode = "audio";
+    }
 
     const previous = this.cur;
     if (this.spare.trackId === track.id && startAt === 0) {
@@ -279,6 +369,12 @@ class PlayerEngine {
     const s = usePlayer.getState();
     const track = currentTrack(s);
     if (!track) return;
+    if (track.source === "youtube") {
+      if (this.mode !== "youtube" || !this.yt.active || s.error) void this.load(track, true, s.position);
+      else if (this.yt.isPlaying()) this.yt.pause();
+      else this.yt.play();
+      return;
+    }
     const el = this.cur.el;
     if (this.cur.trackId !== track.id) {
       void this.load(track, true, s.position);
@@ -298,7 +394,8 @@ class PlayerEngine {
   }
 
   pause() {
-    this.slots && this.cur.el.pause();
+    if (this.mode === "youtube") this.yt.pause();
+    else if (this.slots) this.cur.el.pause();
   }
 
   next() {
@@ -310,7 +407,10 @@ class PlayerEngine {
     const i = nextIndex(s.queue.length, s.index, s.repeat, auto);
     if (i === null) {
       usePlayer.setState({ isPlaying: false, position: 0 });
-      this.cur.el.currentTime = 0;
+      if (this.mode === "youtube") {
+        this.yt.pause();
+        this.yt.seek(0);
+      } else this.cur.el.currentTime = 0;
       return;
     }
     usePlayer.setState({ index: i });
@@ -320,7 +420,7 @@ class PlayerEngine {
 
   prev() {
     const s = usePlayer.getState();
-    if (this.slots && this.cur.el.currentTime > RESTART_THRESHOLD_S) {
+    if (this.time() > RESTART_THRESHOLD_S) {
       this.seek(0);
       return;
     }
@@ -331,6 +431,11 @@ class PlayerEngine {
   }
 
   seek(seconds: number) {
+    if (this.mode === "youtube" && this.yt.active) {
+      this.yt.seek(Math.max(0, seconds));
+      usePlayer.setState({ position: Math.max(0, seconds) });
+      return;
+    }
     const el = this.cur.el;
     const s = usePlayer.getState();
     if (this.cur.trackId !== currentTrack(s)?.id) {
@@ -371,8 +476,8 @@ class PlayerEngine {
       ["previoustrack", () => this.prev()],
       ["nexttrack", () => this.next()],
       ["seekto", (d) => d.seekTime !== undefined && this.seek(d.seekTime)],
-      ["seekbackward", (d) => this.seek(this.cur.el.currentTime - (d.seekOffset ?? 10))],
-      ["seekforward", (d) => this.seek(this.cur.el.currentTime + (d.seekOffset ?? 10))],
+      ["seekbackward", (d) => this.seek(this.time() - (d.seekOffset ?? 10))],
+      ["seekforward", (d) => this.seek(this.time() + (d.seekOffset ?? 10))],
     ];
     for (const [action, handler] of handlers) {
       try {
@@ -426,7 +531,7 @@ class PlayerEngine {
           queue: s.queue,
           baseQueue: s.baseQueue,
           index: s.index,
-          position: this.slots ? this.cur.el.currentTime : s.position,
+          position: this.time() || s.position,
           shuffle: s.shuffle,
           repeat: s.repeat,
           context: s.context,

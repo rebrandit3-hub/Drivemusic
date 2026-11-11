@@ -19,10 +19,13 @@ interface LibraryState {
   toggleLike: (track: Track) => void;
   createPlaylist: (name: string, tracks?: Track[], importedFrom?: string) => Playlist;
   renamePlaylist: (id: string, name: string) => void;
+  setPlaylistArtwork: (id: string, artwork: string) => void;
   deletePlaylist: (id: string) => void;
   addToPlaylist: (playlistId: string, track: Track) => void;
   removeFromPlaylist: (playlistId: string, trackId: string) => void;
   addRecent: (track: Track) => void;
+  /** update a song's details everywhere (e.g. a placeholder found on YouTube) */
+  replaceTrack: (track: Track) => void;
   setDownload: (meta: DownloadMeta) => void;
   removeDownload: (id: string) => void;
 }
@@ -89,6 +92,10 @@ export const useLibrary = create<LibraryState>((set, get) => {
       update((s) => ({
         playlists: s.playlists.map((p) => (p.id === id ? { ...p, name } : p)),
       })),
+    setPlaylistArtwork: (id, artwork) =>
+      update((s) => ({
+        playlists: s.playlists.map((p) => (p.id === id ? { ...p, artwork } : p)),
+      })),
     deletePlaylist: (id) =>
       update((s) => ({ playlists: s.playlists.filter((p) => p.id !== id) })),
     addToPlaylist: (playlistId, track) =>
@@ -115,6 +122,19 @@ export const useLibrary = create<LibraryState>((set, get) => {
       update((s) => ({
         recent: [track, ...s.recent.filter((t) => t.id !== track.id)].slice(0, RECENT_MAX),
       })),
+    replaceTrack: (track) =>
+      update((s) => {
+        const swap = (list: Track[]) => list.map((t) => (t.id === track.id ? track : t));
+        return {
+          liked: swap(s.liked),
+          recent: swap(s.recent),
+          playlists: s.playlists.map((p) =>
+            p.tracks.some((t) => t.id === track.id)
+              ? { ...p, tracks: swap(p.tracks), artwork: p.artwork ?? track.artwork }
+              : p,
+          ),
+        };
+      }),
     setDownload: (meta) =>
       update((s) => ({ downloads: { ...s.downloads, [meta.track.id]: meta } })),
     removeDownload: (id) =>

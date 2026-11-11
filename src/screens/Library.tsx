@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowDown, Heart, Import, Plus } from "lucide-react";
+import { ArrowDown, Heart, Import, Plus, Smartphone } from "lucide-react";
 import { Cover } from "@/components/Cover";
 import { Sheet, SheetItem } from "@/components/Sheet";
 import { useLibrary } from "@/library/store";
@@ -27,7 +27,9 @@ export default function Library() {
   const liked = useLibrary((s) => s.liked);
   const playlists = useLibrary((s) => s.playlists);
   const downloads = useLibrary((s) => s.downloads);
-  const downloadCount = Object.keys(downloads).length;
+  const metas = Object.values(downloads);
+  const downloadCount = metas.filter((m) => m.track.source !== "local").length;
+  const localCount = metas.length - downloadCount;
   const shownPlaylists = filter === "downloaded"
     ? playlists.filter((p) => p.tracks.length > 0 && p.tracks.every((t) => downloads[t.id]))
     : playlists;
@@ -67,6 +69,16 @@ export default function Library() {
               cover={
                 <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded bg-gradient-to-br from-mint-deep to-[#1d3d8f]">
                   <Heart className="h-6 w-6 fill-white text-white" />
+                </div>
+              }
+            />
+            <Row
+              to="/local"
+              title="Music on this phone"
+              subtitle={localCount ? `${localCount} of your own files` : "Add the MP3s you own"}
+              cover={
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded bg-gradient-to-br from-[#3b2a6b] to-[#14532d]">
+                  <Smartphone className="h-7 w-7 text-white" />
                 </div>
               }
             />
@@ -113,6 +125,7 @@ export default function Library() {
               navigate(`/playlist/${p.id}`);
             }}
           />
+          <SheetItem icon={<Smartphone />} label="Add music files" onClick={() => { setAdding(false); navigate("/local"); }} />
           <SheetItem icon={<Import />} label="Import from Spotify" onClick={() => { setAdding(false); navigate("/import"); }} />
         </div>
       </Sheet>

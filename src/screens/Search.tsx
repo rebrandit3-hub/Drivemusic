@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Search as SearchIcon, X } from "lucide-react";
 import { audius, GENRES } from "@/api/audius";
+import { searchYouTube, YouTubeUnavailable } from "@/api/youtube";
 import { Card, Shelf } from "@/components/Shelf";
 import { ErrorState, SkeletonRow } from "@/components/states";
 import { TrackRow } from "@/components/TrackRow";
@@ -48,6 +49,13 @@ export default function Search() {
   const [menu, setMenu] = useState<Track | null>(null);
   const input = useRef<HTMLInputElement>(null);
   const q = useDebounced(text.trim());
+  const youtube = useQuery(q ? `search:yt:${q}` : null, () =>
+    searchYouTube(q).catch((err) => {
+      // not configured: quietly fall back to the open catalog
+      if (err instanceof YouTubeUnavailable) return [];
+      throw err;
+    }),
+  );
   const tracks = useQuery(q ? `search:t:${q}` : null, () => audius.searchTracks(q, 20));
   const artists = useQuery(q ? `search:a:${q}` : null, () => audius.searchArtists(q, 8));
   const playlists = useQuery(q ? `search:p:${q}` : null, () => audius.searchPlaylists(q, 8));
@@ -78,14 +86,25 @@ export default function Search() {
 
       {q && (
         <>
-          {tracks.loading && Array.from({ length: 6 }, (_, i) => <SkeletonRow key={i} />)}
-          {tracks.error && <ErrorState message="Search failed. Check your connection." onRetry={tracks.retry} />}
-          {tracks.data && tracks.data.length === 0 && !artists.data?.length && (
+          {(youtube.loading || tracks.loading) && Array.from({ length: 6 }, (_, i) => <SkeletonRow key={i} />)}
+          {youtube.error && tracks.error && <ErrorState message="Search failed. Check your connection." onRetry={() => { youtube.retry(); tracks.retry(); }} />}
+          {youtube.error && !tracks.error && <p className="px-4 pb-2 text-[13px] text-muted">{youtube.error}</p>}
+          {youtube.data && tracks.data && youtube.data.length === 0 && tracks.data.length === 0 && !artists.data?.length && (
             <p className="px-6 py-12 text-center text-muted">No results for “{q}”.</p>
           )}
-          {tracks.data && tracks.data.length > 0 && (
+          {youtube.data && youtube.data.length > 0 && (
             <section>
               <h2 className="px-4 pb-1 text-[17px] font-bold">Songs</h2>
+              {youtube.data.map((t, i) => (
+                <TrackRow key={t.id} track={t} onPlay={() => player.playQueue(youtube.data!, i, `Search: ${q}`)} onMore={setMenu} />
+              ))}
+            </section>
+          )}
+          {tracks.data && tracks.data.length > 0 && (
+            <section className={youtube.data?.length ? "mt-6" : ""}>
+              <h2 className="px-4 pb-1 text-[17px] font-bold">
+                {youtube.data?.length ? "Open catalog · downloadable" : "Songs"}
+              </h2>
               {tracks.data.map((t, i) => (
                 <TrackRow key={t.id} track={t} onPlay={() => player.playQueue(tracks.data!, i, `Search: ${q}`)} onMore={setMenu} />
               ))}

@@ -4,10 +4,11 @@ import { MiniPlayer } from "@/components/MiniPlayer";
 import { NowPlaying } from "@/components/NowPlaying";
 import { TabBar } from "@/components/TabBar";
 import { ToastHost } from "@/components/Toast";
+import { VideoSurface } from "@/components/VideoSurface";
 import { useLibrary } from "@/library/store";
 import { player } from "@/player/engine";
 import Artist from "@/screens/Artist";
-import { DownloadsScreen, LikedScreen, PlaylistScreen, RemotePlaylistScreen } from "@/screens/Collections";
+import { DownloadsScreen, LikedScreen, LocalFilesScreen, PlaylistScreen, RemotePlaylistScreen } from "@/screens/Collections";
 import Home from "@/screens/Home";
 import ImportScreen from "@/screens/Import";
 import Library from "@/screens/Library";
@@ -51,6 +52,7 @@ function Shell() {
           <Route path="/library" element={<Library />} />
           <Route path="/liked" element={<LikedScreen />} />
           <Route path="/downloads" element={<DownloadsScreen />} />
+          <Route path="/local" element={<LocalFilesScreen />} />
           <Route path="/playlist/:id" element={<PlaylistScreen />} />
           <Route path="/remote/:id" element={<RemotePlaylistScreen />} />
           <Route path="/artist/:id" element={<Artist />} />
@@ -65,6 +67,7 @@ function Shell() {
         {!fullscreen && <TabBar />}
       </div>
       <NowPlaying />
+      <VideoSurface />
       <ToastHost />
     </div>
   );

@@ -7,8 +7,12 @@ export interface Track {
   /** seconds */
   duration: number;
   genre?: string;
-  /** catalog the track streams from */
-  source: "audius";
+  /** where the audio comes from */
+  source: "audius" | "youtube" | "local";
+  /** YouTube video id; missing on imported songs until first played */
+  videoId?: string;
+  /** what to search YouTube for when videoId is missing */
+  query?: string;
 }
 
 export interface Playlist {

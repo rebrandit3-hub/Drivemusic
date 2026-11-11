@@ -83,7 +83,13 @@ export function TrackSheet({ track, onClose, playlistId }: Props) {
           )}
           <SheetItem icon={<ListStart />} label="Play next" onClick={run(() => player.playNext(track), "Playing next")} />
           <SheetItem icon={<ListEnd />} label="Add to queue" onClick={run(() => player.addToQueue(track), "Added to queue")} />
-          {downloaded ? (
+          {track.source === "local" ? (
+            <SheetItem
+              icon={<Trash2 />}
+              label="Delete from this phone"
+              onClick={run(() => void removeDownload(track.id), "Deleted")}
+            />
+          ) : track.source === "youtube" ? null : downloaded ? (
             <SheetItem
               icon={<CheckCircle2 className="text-mint" />}
               label="Remove download"

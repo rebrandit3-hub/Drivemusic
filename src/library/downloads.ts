@@ -41,7 +41,11 @@ async function requestPersistence() {
   }
 }
 
+/** Only open-catalog songs can be saved; YouTube songs stream in YouTube's player. */
+export const canDownload = (track: Track) => track.source === "audius";
+
 export async function downloadTrack(track: Track): Promise<void> {
+  if (!canDownload(track)) throw new Error("This song can't be downloaded.");
   if (useLibrary.getState().downloads[track.id]) return;
   if (useDownloadProgress.getState().progress[track.id] !== undefined) return;
   void requestPersistence();
@@ -72,11 +76,7 @@ export async function downloadTrack(track: Track): Promise<void> {
       data.set(chunk, offset);
       offset += chunk.byteLength;
     }
-    const stored: StoredAudio = {
-      type: res.headers.get("content-type") || "audio/mpeg",
-      data: data.buffer,
-    };
-    await set(audioKey(track.id), stored);
+    await saveAudio(track.id, data.buffer, res.headers.get("content-type") || "audio/mpeg");
     useLibrary
       .getState()
       .setDownload({ track, bytes: received, savedAt: Date.now() });
@@ -92,13 +92,19 @@ export async function downloadTrack(track: Track): Promise<void> {
 
 export async function downloadMany(tracks: Track[]) {
   // one at a time keeps memory low and leaves bandwidth for playback
-  for (const track of tracks) {
+  for (const track of tracks.filter(canDownload)) {
     try {
       await downloadTrack(track);
     } catch {
       // keep going; the error is shown on that track
     }
   }
+}
+
+export async function saveAudio(id: string, data: ArrayBuffer, type: string) {
+  void requestPersistence();
+  const stored: StoredAudio = { type, data };
+  await set(audioKey(id), stored);
 }
 
 export async function removeDownload(id: string) {

@@ -4,14 +4,14 @@ import { CheckCircle2, ChevronLeft, ClipboardPaste, X } from "lucide-react";
 import { Cover } from "@/components/Cover";
 import { Spinner } from "@/components/states";
 import { useLibrary } from "@/library/store";
-import { fetchSpotifyPlaylist, findSpotifyLink, type SpotifyTrack } from "@/spotify/api";
+import { fetchSpotifyPlaylist, findSpotifyLink } from "@/spotify/api";
 import { matchTracks } from "@/spotify/importer";
 
 type Phase =
   | { kind: "idle" }
   | { kind: "reading" }
   | { kind: "matching"; name: string; image?: string; done: number; total: number }
-  | { kind: "done"; playlistId: string; name: string; image?: string; matched: number; missing: SpotifyTrack[] };
+  | { kind: "done"; playlistId: string; name: string; image?: string; total: number; catalog: number; youtube: number };
 
 const SPOTIFY_GREEN = "#1ed760";
 
@@ -44,14 +44,15 @@ export default function ImportScreen() {
       if (!source.tracks.length) throw new Error("This playlist is empty.");
       const base = { name: source.name, image: source.image };
       setPhase({ kind: "matching", ...base, done: 0, total: source.tracks.length });
-      const { matched, missing } = await matchTracks(
+      const { tracks, catalog, youtube } = await matchTracks(
         source.tracks,
         (done, total) => setPhase({ kind: "matching", ...base, done, total }),
         ctrl.signal,
       );
       if (ctrl.signal.aborted) return;
-      const playlist = useLibrary.getState().createPlaylist(source.name, matched, `spotify:${source.id}`);
-      setPhase({ kind: "done", playlistId: playlist.id, ...base, matched: matched.length, missing });
+      const playlist = useLibrary.getState().createPlaylist(source.name, tracks, `spotify:${source.id}`);
+      if (source.image) useLibrary.getState().setPlaylistArtwork(playlist.id, source.image);
+      setPhase({ kind: "done", playlistId: playlist.id, ...base, total: tracks.length, catalog, youtube });
     } catch (err) {
       if (ctrl.signal.aborted) return;
       started.current = null;
@@ -121,21 +122,17 @@ export default function ImportScreen() {
             <CheckCircle2 className="absolute -bottom-3 -right-3 h-10 w-10 rounded-full bg-bg fill-mint text-bg" />
           </div>
           <p className="mt-3 text-xl font-bold">{phase.name}</p>
-          <p className="text-sm text-muted">
-            {phase.matched} of {phase.matched + phase.missing.length} songs added to Your Library
-          </p>
+          <p className="text-sm text-muted">{phase.total} songs added to Your Library</p>
+          {phase.youtube > 0 && (
+            <p className="max-w-[300px] text-[13px] text-faint">
+              {phase.catalog > 0 ? `${phase.catalog} can be downloaded for offline. ` : ""}
+              {phase.youtube} play from YouTube (streaming only).
+            </p>
+          )}
           <button onClick={() => navigate(`/playlist/${phase.playlistId}`, { replace: true })} className="mt-2 h-12 rounded-full bg-mint px-8 font-bold text-on-mint">
             Open playlist
           </button>
           <button onClick={reset} className="py-2 text-sm font-semibold text-muted">Import another</button>
-          {phase.missing.length > 0 && (
-            <div className="mt-4 w-full text-left">
-              <p className="pb-1 text-sm font-bold">Not in the catalog ({phase.missing.length})</p>
-              {phase.missing.slice(0, 100).map((t, i) => (
-                <p key={i} className="truncate py-1 text-[13px] text-muted">{t.title} — {t.artists.join(", ")}</p>
-              ))}
-            </div>
-          )}
         </div>
       ) : (
         <div className="px-4 pt-4">
